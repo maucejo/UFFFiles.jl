@@ -757,11 +757,11 @@ function write_dataset2414(dataset::Dataset2414)
             # Get data for this node
             data_vals = if dataset.dtype < 5
                 # Real or integer data
-                vec(dataset.data_value[i, :])
+                vec(dataset.data_value[:, i])
             else
                 # Complex data: interleave real and imaginary parts
                 vals = Float64[]
-                for val in dataset.data_value[i, :]
+                for val in dataset.data_value[:, i]
                     push!(vals, real(val))
                     push!(vals, imag(val))
                 end

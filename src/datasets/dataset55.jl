@@ -383,7 +383,7 @@ function parse_dataset55(block)
           r7_raw,
           r8_raw,
           node_number,
-          copy(transpose(reduce(hcat, data)))
+          copy(reduce(hcat, data))
      )
 end
 
@@ -451,7 +451,7 @@ function write_dataset55(dataset::Dataset55)
 
         # Record 10: format 6E13.5 - data values
         # Get data for this node
-        node_data = dataset.data[i, :]
+        node_data = dataset.data[:, i]
 
         # Convert complex data to alternating real/imag if dtype is 5 (complex)
         if dataset.dtype == 5

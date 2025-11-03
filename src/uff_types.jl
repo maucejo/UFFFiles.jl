@@ -803,7 +803,7 @@ A struct containing UFF Dataset 2414 metadata.
                 for (i, dv) in enumerate(data_value_raw)
                     npts = data_info.npts_per_elt[i]
                     ndv = data_info.ndv_per_point[i]
-                    push!(data_value, copy(transpose(reshape(dv, ndv, npts))))
+                    push!(data_value, copy(reshape(dv, ndv, npts)))
                 end
             end
         end

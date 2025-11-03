@@ -842,5 +842,155 @@ function parse_dataset58(block)
 end
 
 function write_dataset58(dataset::Dataset58)
-    # Function implementation goes here
+    lines = String[]
+
+    # Start marker
+    push!(lines, "    -1")
+
+    # Dataset number
+    push!(lines, "    58")
+
+    # Records 1-5: ID Lines (80A1 format)
+    push!(lines, dataset.id1)
+    push!(lines, dataset.id2)
+    push!(lines, dataset.id3)
+    push!(lines, dataset.id4)
+    push!(lines, dataset.id5)
+
+    # Record 6: DOF Identification
+    # Format: 2(I5,I10),2(1X,10A1,I10,I4)
+    r6_line = @sprintf("%5d%10d%5d%10d %-10s%10d%4d %-10s%10d%4d",
+        dataset.func_type,
+        dataset.func_id,
+        dataset.ver_num,
+        dataset.load_case,
+        dataset.resp_name,
+        dataset.resp_node,
+        dataset.resp_dir,
+        dataset.ref_name,
+        dataset.ref_node,
+        dataset.ref_dir)
+    push!(lines, r6_line)
+
+    # Record 7: Data Form
+    # Format: 3I10,3E13.5
+    r7_line = @sprintf("%10d%10d%10d%13.5E%13.5E%13.5E",
+        dataset.ord_dtype,
+        dataset.num_pts,
+        dataset.abs_spacing_type,
+        dataset.abs_start,
+        dataset.abs_increment,
+        dataset.zval)
+    push!(lines, r7_line)
+
+    # Record 8: Abscissa Data Characteristics
+    # Format: I10,3I5,2(1X,20A1)
+    r8_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
+        dataset.abs_spec_dtype,
+        dataset.abs_len_unit_exp,
+        dataset.abs_force_unit_exp,
+        dataset.abs_temp_unit_exp,
+        dataset.abs_axis_label,
+        dataset.abs_axis_unit_label)
+    push!(lines, r8_line)
+
+    # Record 9: Ordinate Data Characteristics
+    # Format: I10,3I5,2(1X,20A1)
+    r9_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
+        dataset.ord_spec_dtype,
+        dataset.ord_len_unit_exp,
+        dataset.ord_force_unit_exp,
+        dataset.ord_temp_unit_exp,
+        dataset.ord_axis_label,
+        dataset.ord_axis_unit_label)
+    push!(lines, r9_line)
+
+    # Record 10: Ordinate Denominator Data Characteristics
+    # Format: I10,3I5,2(1X,20A1)
+    r10_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
+        dataset.ord_denom_spec_dtype,
+        dataset.ord_denom_len_unit_exp,
+        dataset.ord_denom_force_unit_exp,
+        dataset.ord_denom_temp_unit_exp,
+        dataset.ord_denom_axis_label,
+        dataset.ord_denom_axis_unit_label)
+    push!(lines, r10_line)
+
+    # Record 11: Z-axis Data Characteristics
+    # Format: I10,3I5,2(1X,20A1)
+    r11_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
+        dataset.z_spec_dtype,
+        dataset.z_len_unit_exp,
+        dataset.z_force_unit_exp,
+        dataset.z_temp_unit_exp,
+        dataset.z_axis_label,
+        dataset.z_axis_unit_label)
+    push!(lines, r11_line)
+
+    # Record 12: Data Values
+    # Format depends on ordinate data type and precision
+    if dataset.ord_dtype == 2 || dataset.ord_dtype == 4
+        # Real data (single or double precision)
+        if dataset.ord_dtype == 2
+            # Real single precision: 6E13.5
+            values_per_line = 6
+            fmt = "E13.5"
+        else
+            # Real double precision: 4E20.12
+            values_per_line = 4
+            fmt = "E20.12"
+        end
+
+        # Write data in chunks
+        for i in 1:values_per_line:length(dataset.data)
+            end_idx = min(i + values_per_line - 1, length(dataset.data))
+            chunk = dataset.data[i:end_idx]
+
+            if dataset.ord_dtype == 2
+                line = join([@sprintf(" %12.5E", v) for v in chunk], "")
+            else
+                line = join([@sprintf(" %19.12E", v) for v in chunk], "")
+            end
+            push!(lines, line)
+        end
+
+    elseif dataset.ord_dtype == 5 || dataset.ord_dtype == 6
+        # Complex data (single or double precision)
+        if dataset.ord_dtype == 5
+            # Complex single precision: 6E13.5 (3 complex values per line)
+            values_per_line = 3
+        else
+            # Complex double precision: 4E20.12 (2 complex values per line)
+            values_per_line = 2
+        end
+
+        # Write data in chunks (real and imaginary parts interleaved)
+        for i in 1:values_per_line:length(dataset.data)
+            end_idx = min(i + values_per_line - 1, length(dataset.data))
+            chunk = dataset.data[i:end_idx]
+
+            if dataset.ord_dtype == 5
+                # 6E13.5 format
+                parts = Float64[]
+                for c in chunk
+                    push!(parts, real(c))
+                    push!(parts, imag(c))
+                end
+                line = join([@sprintf(" %12.5E", v) for v in parts], "")
+            else
+                # 4E20.12 format
+                parts = Float64[]
+                for c in chunk
+                    push!(parts, real(c))
+                    push!(parts, imag(c))
+                end
+                line = join([@sprintf(" %19.12E", v) for v in parts], "")
+            end
+            push!(lines, line)
+        end
+    end
+    # End marker
+    push!(lines, "    -1")
+
+    return lines
 end

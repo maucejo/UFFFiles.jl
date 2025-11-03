@@ -22,7 +22,7 @@ function readuff(filename::String)
         # Determine dataset type from the first line of the block
         dtype = strip(block[1])
         # Parse the block based on its dataset type
-        data[i] = parse_block(dtype, block)
+        data[i] = parse_datasets(dtype, block)
     end
 
     return data
@@ -41,7 +41,7 @@ written.
 function writeuff(filename::String, data)
     open(filename, "w") do io
         for dataset in data
-            lines = write_dataset(dataset)
+            lines = write_datasets(dataset)
 
             # Write the formatted lines to the file
             for line in lines
@@ -53,7 +53,7 @@ end
 
 ## Functions for reading and writing UFF datasets
 """
-    parse_block(dtype::String, block::Vector{String}) -> UFFDataset
+    parse_datasets(dtype::String, block::Vector{String}) -> UFFDataset
 
 Parses a block of UFF data based on the dataset type.
 
@@ -64,7 +64,7 @@ Parses a block of UFF data based on the dataset type.
 **Output**
 - `dataset::UFFDataset`: The parsed dataset as an instance of the corresponding UFFDataset subtype.
 """
-function parse_block(dtype, block)
+function parse_datasets(dtype, block)
     if dtype == "15"
         # Parse Dataset15
         return parse_dataset15(block)
@@ -111,7 +111,7 @@ Writes a UFF dataset to a vector of formatted strings based on its type.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content.
 """
-function write_dataset(dataset::UFFDataset)
+function write_datasets(dataset::UFFDataset)
     if dataset isa Dataset15
         return write_dataset15(dataset)
     elseif dataset isa Dataset18
