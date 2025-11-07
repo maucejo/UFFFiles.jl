@@ -37,7 +37,7 @@
     "href": "index.html",
     "title": "UFFFiles.jl",
     "section": "",
-    "text": "UFFFiles.jl is a Julia package for reading (and writing in the future) Universal File Format (UFF) files, commonly used in engineering applications.",
+    "text": "UFFFiles.jl is a Julia package for reading and writing Universal File Format (UFF) files, commonly used in engineering applications.",
     "crumbs": [
       "Overview",
       "UFFFiles.jl"
@@ -48,7 +48,7 @@
     "href": "index.html#supported-formats",
     "title": "UFFFiles.jl",
     "section": "Supported formats",
-    "text": "Supported formats\nCurrently, UFFFiles.jl supports reading UFF files with the following blocks:\n\nDataset 15\nDataset 18\nDataset 55\nDataset 58\nDataset 82\nDataset 151\nDataset 164\nDataset 2411\nDataset 2412\nDataset 2414",
+    "text": "Supported formats\nCurrently, UFFFiles.jl supports reading and writing UFF files with the following blocks:\n\nDataset 15\nDataset 18\nDataset 55\nDataset 58\nDataset 82\nDataset 151\nDataset 164\nDataset 2411\nDataset 2412\nDataset 2414",
     "crumbs": [
       "Overview",
       "UFFFiles.jl"
@@ -81,7 +81,7 @@
     "href": "index.html#reproducibility",
     "title": "UFFFiles.jl",
     "section": "Reproducibility",
-    "text": "Reproducibility\n\n\n\n\n\n\nProject direct dependencies\n\n\n\n\n\nUFFFiles.jl has no direct dependencies.\n\n\n\n\n\n\n\n\n\nJulia version and machine information\n\n\n\n\n\nJulia Version 1.12.1\nCommit ba1e628ee49 (2025-10-17 13:02 UTC)\nBuild Info:\n  Official https://julialang.org release\nPlatform Info:\n  OS: macOS (arm64-apple-darwin24.0.0)\n  CPU: 16 × Apple M4 Max\n  WORD_SIZE: 64\n  LLVM: libLLVM-18.1.7 (ORCJIT, apple-m4)\n  GC: Built with stock GC\nThreads: 1 default, 1 interactive, 1 GC (on 12 virtual cores)\nEnvironment:\n  JULIA_EDITOR = code\n  JULIA_VSCODE_REPL = 1\n  JULIA_PKG_SERVER = https://juliahub.com",
+    "text": "Reproducibility\n\n\n\n\n\n\nProject direct dependencies\n\n\n\n\n\nUFFFiles.jl has the following direct dependencies.\nProject UFFFiles v0.2.0\nStatus\n  [de0858da] Printf v1.11.0\n\n\n\n\n\n\n\n\n\nJulia version and machine information\n\n\n\n\n\nJulia Version 1.12.1\nCommit ba1e628ee49 (2025-10-17 13:02 UTC)\nBuild Info:\n  Official https://julialang.org release\nPlatform Info:\n  OS: macOS (arm64-apple-darwin24.0.0)\n  CPU: 16 × Apple M4 Max\n  WORD_SIZE: 64\n  LLVM: libLLVM-18.1.7 (ORCJIT, apple-m4)\n  GC: Built with stock GC\nThreads: 1 default, 1 interactive, 1 GC (on 12 virtual cores)\nEnvironment:\n  JULIA_EDITOR = code\n  JULIA_VSCODE_REPL = 1\n  JULIA_PKG_SERVER = https://juliahub.com",
     "crumbs": [
       "Overview",
       "UFFFiles.jl"
@@ -103,7 +103,7 @@
     "href": "usage/index.html",
     "title": "Basic Usage",
     "section": "",
-    "text": "At the moment, UFFFiles.jl only implements reading functionalities through the function readuff. Future versions will include additional functionalities for writing UFF data in a given format.",
+    "text": "UFFFiles.jl implements reading and writing functionalities through the functions readuff and writeuff.",
     "crumbs": [
       "Usage",
       "Basic Usage"
@@ -115,6 +115,17 @@
     "title": "Basic Usage",
     "section": "Reading UFF Files",
     "text": "Reading UFF Files\nusing UFFFiles\n\ndata = readuff(\"path/to/your/file.uff\")\n\n\n\nreaduff(filename::String) -&gt; Vector{UFFDataset}\nReads a UFF (Universal File Format) file and parses its contents into a vector of UFFDataset objects.\nInput\n\nfilename::String: The path to the UFF file to be read.\n\n\nOutput\n\ndata::Vector{UFFDataset}: A vector containing the parsed UFF datasets.\n\n\n\n\n\n\n\n\nBecause readuff returns a vector of datasets, you can interact with a given dataset as usually done in Julia. A dataset is a Julia composite type (i.e., a struct), having its own fields, corresponding to the UFF dataset type.\nAs an example, let’s say that you have read a UFF file containing multiple datasets. You can access each dataset by indexing the returned vector and interacting with it through its fields.\n# Access to the first dataset extracted\n# Suppose that the first dataset is of type Dataset15\nd15 = data[1]\n\n# Access to the list of node coordinates\nnode_coords = d15.coords",
+    "crumbs": [
+      "Usage",
+      "Basic Usage"
+    ]
+  },
+  {
+    "objectID": "usage/index.html#writing-uff-files",
+    "href": "usage/index.html#writing-uff-files",
+    "title": "Basic Usage",
+    "section": "Writing UFF Files",
+    "text": "Writing UFF Files\nwriteuff(\"path/to/your/file.uff\", data)\n\n\n\nwriteuff(filename::String, data::Vector{UFFDataset})\nWrites a vector of UFFDataset objects to a UFF file.\nInput\n\nfilename::String: The path to the UFF file to be written.\n\ndata::Vector{UFFDataset}: A vector containing the UFF datasets to be\n\n\nwritten.",
     "crumbs": [
       "Usage",
       "Basic Usage"
@@ -466,29 +477,62 @@
     "href": "usage/helper.html",
     "title": "Helper functions",
     "section": "",
-    "text": "UFFFiles.jl provides several helper functions to facilitate interaction with UFF datasets. At the moment, the following helper functions are available:",
+    "text": "UFFFiles.jl provides several helper functions to facilitate interaction with UFF datasets.",
     "crumbs": [
       "Usage",
       "Helper functions"
     ]
   },
   {
-    "objectID": "usage/helper.html#api",
-    "href": "usage/helper.html#api",
+    "objectID": "usage/helper.html#dataset-type",
+    "href": "usage/helper.html#dataset-type",
     "title": "Helper functions",
-    "section": "1 API",
-    "text": "1 API\n\n\n\nconnectivity_matrix(dataset::Dataset2412) -&gt; Matrix{Int}\nReturns the connectivity matrix for a Dataset2412 object, where each row corresponds to an element and each column corresponds to a node. Missing values are filled with -1.\nInput\n\ndataset::Dataset2412: The Dataset2412 object to extract connectivity from.\n\n\nOutput\n\nMatrix{Int}: A matrix representing the connectivity of elements to nodes.\n\n\n\n\n\n\n\n\n\n\n\ndataset_types(data::UFFDataset) -&gt; Symbol\nReturns the dataset type presents in a UFFDataset object.\nInput\n\ndata::UFFDataset: The UFFDataset object to extract types from.\n\n\nOutput\n\nSymbol: A vector containing the dataset types.\n\n\n\n\n\n\n\n\n\n\n\nsupported_datasets() -&gt; Vector{Int}\nReturns a vector of supported UFF dataset types.",
+    "section": "1 Dataset Type",
+    "text": "1 Dataset Type\n\n\n\ndataset_type(data::UFFDataset)\nReturns the dataset type presents in a UFFDataset object.\nInput\n\ndata::UFFDataset: The UFFDataset object to extract types from.\n\n\nOutput\n\nSymbol: A vector containing the dataset types.\n\n\n\n\n\n\n\n\nusing UFFFiles\n\n# Only one dataset is read\ndata = readuff(\"path/to/your/file.uff\")[1]\ndtype = dataset_types(data)\n\n# Several datasets are read\ndata_all = readuff(\"path/to/your/file.uff\")\ndtypes = dataset_types.(data_all)",
     "crumbs": [
       "Usage",
       "Helper functions"
     ]
   },
   {
-    "objectID": "usage/helper.html#example-usage",
-    "href": "usage/helper.html#example-usage",
+    "objectID": "usage/helper.html#supported-datasets",
+    "href": "usage/helper.html#supported-datasets",
     "title": "Helper functions",
-    "section": "2 Example usage",
-    "text": "2 Example usage\n\n2.1 Connectivity Matrix\nusing UFFFilesReader\n\n# readuff returns a vector of datasets\ndata2412 = readuff(\"path/to/your/file2412.uff\")[1]\nconnectivity = connectivity_matrix(data2412)\n\n\n2.2 Dataset Types\nusing UFFFilesReader\n\n# Only one dataset is read\ndata = readuff(\"path/to/your/file.uff\")[1]\ndtype = dataset_types(data)\n\n# Several datasets are read\ndata_all = readuff(\"path/to/your/file.uff\")\ndtypes = dataset_types.(data_all)\n\n\n2.3 Supported Datasets\nusing UFFFilesReader\n\nvalid_datasets = supported_datasets()",
+    "section": "2 Supported Datasets",
+    "text": "2 Supported Datasets\n\n\n\nsupported_datasets()\nReturns a vector of supported UFF dataset types.\n\n\n\n\n\n\nusing UFFFiles\n\nvalid_datasets = supported_datasets()",
+    "crumbs": [
+      "Usage",
+      "Helper functions"
+    ]
+  },
+  {
+    "objectID": "usage/helper.html#connectivity-matrix",
+    "href": "usage/helper.html#connectivity-matrix",
+    "title": "Helper functions",
+    "section": "3 Connectivity Matrix",
+    "text": "3 Connectivity Matrix\n\n\n\nconnectivity_matrix(dataset::Dataset2412)\nReturns the connectivity matrix for a Dataset2412 object, where each row corresponds to an element and each column corresponds to a node. Missing values are filled with -1.\nInput\n\ndataset::Dataset2412: The Dataset2412 object to extract connectivity from.\n\n\nOutput\n\nMatrix{Int}: A matrix representing the connectivity of elements to nodes.\n\n\n\n\n\n\n\n\nusing UFFFiles\n\n# readuff returns a vector of datasets\ndata2412 = readuff(\"path/to/your/file2412.uff\")[1]\nconnectivity = connectivity_matrix(data2412)",
+    "crumbs": [
+      "Usage",
+      "Helper functions"
+    ]
+  },
+  {
+    "objectID": "usage/helper.html#dataset-55-to-matrix",
+    "href": "usage/helper.html#dataset-55-to-matrix",
+    "title": "Helper functions",
+    "section": "4 Dataset 55 to matrix",
+    "text": "4 Dataset 55 to matrix\n\n\n\ndataset55_to_mat(dataset::Vector{Dataset55})\nConverts a vector of Dataset55 objects into a matrix of data values and a vector of corresponding x-values based on the analysis type.\nInput\n\ndataset::Vector{Dataset55}: A vector of Dataset55 objects to be converted\n\n\nOutputs\n\nmat::VecOrMat{dtype}: A matrix where each column corresponds to a dataset's data values.\n\nx::Vector{xtype}: Vector of x-values corresponding to each dataset based on its analysis type.\n\n\nNote\n\ndtype and xtype depend on the dataset's dtype and analysis_type respectively.\n\nIt is assumed that all datasets in the input vector have the same number of data points and analysis type.\n\n\n\n\n\n\n\n\nusing UFFFiles\n\n# Let's assume you have read a UFF file containing dataset 55 only\ndata55 = readuff(\"path/to/your/file55.uff\")\n\n# Convert dataset 55 to a matrix\nmatrix55, x = dataset55_to_mat(data55)",
+    "crumbs": [
+      "Usage",
+      "Helper functions"
+    ]
+  },
+  {
+    "objectID": "usage/helper.html#dataset-58-to-matrix",
+    "href": "usage/helper.html#dataset-58-to-matrix",
+    "title": "Helper functions",
+    "section": "5 Dataset 58 to matrix",
+    "text": "5 Dataset 58 to matrix\n\n\n\ndataset58_to_mat(dataset::Vector{Dataset58})\nConverts a vector of Dataset58 objects into a matrix of data values and a vector of corresponding x-values based on the dataset parameters.\nInput\n\ndataset::Vector{Dataset58}: A vector of Dataset58 objects to be converted\n\n\nOutputs\n\nmat::VecOrMat{dtype}: A matrix where each row corresponds to a dataset's data values.\n\nx::Vector{xtype}: A vector of x-values corresponding to each dataset based on its parameters.\n\n\nNote\n\ndtype and xtype depend on the dataset's ord_dtype.\n\nIt is assumed that all datasets in the input vector have the same number of data points and data type.\n\n\n\n\n\n\n\n\nusing UFFFiles\n\n# Let's assume you have read a UFF file containing dataset 58 only\ndata58 = readuff(\"path/to/your/file58.uff\")\n\n# Convert dataset 58 to a matrix\nmatrix58, x = dataset58_to_matrix(data58)",
     "crumbs": [
       "Usage",
       "Helper functions"
@@ -499,7 +543,18 @@
     "href": "overview/release_notes.html",
     "title": "Release Notes",
     "section": "",
-    "text": "Initial release of the package",
+    "text": "Implementation of writing functionality for all the datasets in the package.",
+    "crumbs": [
+      "Overview",
+      "Release Notes"
+    ]
+  },
+  {
+    "objectID": "overview/release_notes.html#v0.2.0",
+    "href": "overview/release_notes.html#v0.2.0",
+    "title": "Release Notes",
+    "section": "",
+    "text": "Implementation of writing functionality for all the datasets in the package.",
     "crumbs": [
       "Overview",
       "Release Notes"
@@ -509,8 +564,8 @@
     "objectID": "overview/release_notes.html#v0.1.0",
     "href": "overview/release_notes.html#v0.1.0",
     "title": "Release Notes",
-    "section": "",
-    "text": "Initial release of the package",
+    "section": "v0.1.0",
+    "text": "v0.1.0\n\nInitial release of the package",
     "crumbs": [
       "Overview",
       "Release Notes"

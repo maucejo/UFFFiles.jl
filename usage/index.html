@@ -197,6 +197,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#reading-uff-files" id="toc-reading-uff-files" class="nav-link active" data-scroll-target="#reading-uff-files">Reading UFF Files</a></li>
+  <li><a href="#writing-uff-files" id="toc-writing-uff-files" class="nav-link" data-scroll-target="#writing-uff-files">Writing UFF Files</a></li>
   </ul>
 </nav>
     </div>
@@ -222,7 +223,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>At the moment, <code>UFFFiles.jl</code> only implements reading functionalities through the function <code>readuff</code>. Future versions will include additional functionalities for writing UFF data in a given format.</p>
+<p><code>UFFFiles.jl</code> implements reading and writing functionalities through the functions <code>readuff</code> and <code>writeuff</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>UFFDataset</code> is an abstract type representing a generic UFF dataset. Each specific UFF dataset type (e.g., <code>Dataset15</code>, <code>Dataset58</code>, etc.) is a concrete subtype of <code>UFFDataset</code>.</p>
+</div>
+</div>
 <section id="reading-uff-files" class="level2">
 <h2 class="anchored" data-anchor-id="reading-uff-files">Reading UFF Files</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
@@ -257,6 +271,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Access to the list of node coordinates</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>node_coords <span class="op">=</span> d15.coords</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="writing-uff-files" class="level2">
+<h2 class="anchored" data-anchor-id="writing-uff-files">Writing UFF Files</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">writeuff</span>(<span class="st">"path/to/your/file.uff"</span>, data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="api">
+<div id="6" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown"><pre><code class="language-julia">writeuff(filename::String, data::Vector{UFFDataset})</code></pre>
+<p>Writes a vector of UFFDataset objects to a UFF file.</p>
+<p><strong>Input</strong></p>
+<ul>
+<li><p><code>filename::String</code>: The path to the UFF file to be written.</p>
+</li>
+<li><p><code>data::Vector{UFFDataset}</code>: A vector containing the UFF datasets to be</p>
+</li>
+</ul>
+<p>written.</p>
+
+
+</div>
+</div>
+</div>
+</div>
 
 
 </section>
