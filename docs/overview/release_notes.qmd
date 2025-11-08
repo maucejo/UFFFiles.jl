@@ -6,6 +6,10 @@ format:
     number-sections: false
 ---
 
+## v0.3.0
+
+- Skipping unsupported dataset blocks during UFF file parsing, with a warning message instead of throwing an error.
+
 ## v0.2.0
 
 - Implementation of writing functionality for all the datasets in the package.

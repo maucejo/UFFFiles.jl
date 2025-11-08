@@ -15,19 +15,32 @@ function readuff(filename::String)
     blocks = extract_blocks(filename)
     nblocks = length(blocks)
 
-    # Initialize an array to hold parsed datasets
-    data = Vector{UFFDataset}(undef, nblocks)
+    # Check each block for support
+    supported_blocks = issupported.(blocks)
+    nunsup= count(.!supported_blocks)
+    nsup= nblocks - nunsup
 
-    for (i, block) in enumerate(blocks)
+    # Initialize an array to hold parsed datasets
+    data = Vector{UFFDataset}(undef, nsup)
+
+    i = 1
+    for (b, block) in enumerate(blocks)
         # Determine dataset type from the first line of the block
         dtype = strip(block[1])
+        if !supported_blocks[b]
+            @warn "Unsupported dataset type: $dtype - skipping this block."
+            continue
+        end
+
         # Parse the block based on its dataset type
         data[i] = parse_datasets(dtype, block)
+        i += 1
     end
 
     return data
 end
 
+# FileIO integration
 fileio_load(file::File{FileIO.format"UFF"}) = readuff(file.filename)
 
 """
@@ -53,6 +66,7 @@ function writeuff(filename::String, data)
     end
 end
 
+# FileIO integration
 fileio_save(file::File{format"UFF"}, data) = writeuff(file.filename, data)
 
 ## Functions for reading and writing UFF datasets
@@ -99,8 +113,6 @@ function parse_datasets(dtype, block)
     elseif dtype == "2414"
         # Parse Dataset2414
         return parse_dataset2414(block)
-    else
-        throw("Unsupported dataset type: $dtype")
     end
 end
 

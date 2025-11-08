@@ -49,7 +49,7 @@ function write_dataset2411(dataset::Dataset2411)
 
     # Header
     push!(lines, "    -1")
-    push!(lines, "   2411")
+    push!(lines, "  2411")
 
     # Ensure we can iterate consistently over nodes
     nnodes = length(dataset.nodes_ID)

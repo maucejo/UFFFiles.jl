@@ -63,6 +63,17 @@ function extend_line(line)
     return line
 end
 
+"""
+    issupported(block::Vector{String}) -> Bool
+"""
+function issupported(block::Vector{String})
+    dtype = parse(Int, strip(block[1]))
+    supported = supported_datasets()
+
+    return dtype in supported
+end
+
+
 ## Macro
 """
     @show_struct struct StructName
