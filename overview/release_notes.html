@@ -164,7 +164,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#v0.2.0" id="toc-v0.2.0" class="nav-link active" data-scroll-target="#v0.2.0">v0.2.0</a></li>
+  <li><a href="#v0.3.0" id="toc-v0.3.0" class="nav-link active" data-scroll-target="#v0.3.0">v0.3.0</a></li>
+  <li><a href="#v0.2.1" id="toc-v0.2.1" class="nav-link" data-scroll-target="#v0.2.1">v0.2.1</a></li>
+  <li><a href="#v0.2.0" id="toc-v0.2.0" class="nav-link" data-scroll-target="#v0.2.0">v0.2.0</a></li>
   <li><a href="#v0.1.0" id="toc-v0.1.0" class="nav-link" data-scroll-target="#v0.1.0">v0.1.0</a></li>
   </ul>
 </nav>
@@ -191,6 +193,23 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="v0.3.0" class="level2">
+<h2 class="anchored" data-anchor-id="v0.3.0">v0.3.0</h2>
+<p><strong>Breaking changes</strong></p>
+<ul>
+<li><code>conversion_factors</code> field in <code>Dataset164</code> struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to <a href="https://github.com/Spectrum-Tec"><span class="citation" data-cites="JakeZw">@JakeZw</span></a> for submitting the PR.</li>
+</ul>
+</section>
+<section id="v0.2.1" class="level2">
+<h2 class="anchored" data-anchor-id="v0.2.1">v0.2.1</h2>
+<p><strong>Internals changes only</strong></p>
+<ul>
+<li><p>Skipping unsupported dataset blocks during UFF file parsing, with a warning message instead of throwing an error.</p></li>
+<li><p>Remove <code>parse_dataset</code> function in favor of <code>getfield(UFFFiles, Symbol("parse_dataset", dtype))</code> calls in <code>read_uff</code> function. Thanks to <a href="https://github.com/Spectrum-Tec"><span class="citation" data-cites="JakeZw">@JakeZw</span></a></p></li>
+<li><p>Modify <code>parse_dataset58</code> to handle lines without spacing between values.</p></li>
+<li><p>Use multiple dispatch to write dataset blocks in a more modular way.</p></li>
+</ul>
+</section>
 <section id="v0.2.0" class="level2">
 <h2 class="anchored" data-anchor-id="v0.2.0">v0.2.0</h2>
 <ul>

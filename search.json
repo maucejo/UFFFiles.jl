@@ -543,7 +543,29 @@
     "href": "overview/release_notes.html",
     "title": "Release Notes",
     "section": "",
-    "text": "Implementation of writing functionality for all the datasets in the package.",
+    "text": "Breaking changes\n\nconversion_factors field in Dataset164 struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to @JakeZw for submitting the PR.",
+    "crumbs": [
+      "Overview",
+      "Release Notes"
+    ]
+  },
+  {
+    "objectID": "overview/release_notes.html#v0.3.0",
+    "href": "overview/release_notes.html#v0.3.0",
+    "title": "Release Notes",
+    "section": "",
+    "text": "Breaking changes\n\nconversion_factors field in Dataset164 struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to @JakeZw for submitting the PR.",
+    "crumbs": [
+      "Overview",
+      "Release Notes"
+    ]
+  },
+  {
+    "objectID": "overview/release_notes.html#v0.2.1",
+    "href": "overview/release_notes.html#v0.2.1",
+    "title": "Release Notes",
+    "section": "v0.2.1",
+    "text": "v0.2.1\nInternals changes only\n\nSkipping unsupported dataset blocks during UFF file parsing, with a warning message instead of throwing an error.\nRemove parse_dataset function in favor of getfield(UFFFiles, Symbol(\"parse_dataset\", dtype)) calls in read_uff function. Thanks to @JakeZw\nModify parse_dataset58 to handle lines without spacing between values.\nUse multiple dispatch to write dataset blocks in a more modular way.",
     "crumbs": [
       "Overview",
       "Release Notes"
@@ -553,8 +575,8 @@
     "objectID": "overview/release_notes.html#v0.2.0",
     "href": "overview/release_notes.html#v0.2.0",
     "title": "Release Notes",
-    "section": "",
-    "text": "Implementation of writing functionality for all the datasets in the package.",
+    "section": "v0.2.0",
+    "text": "v0.2.0\n\nImplementation of writing functionality for all the datasets in the package.",
     "crumbs": [
       "Overview",
       "Release Notes"
