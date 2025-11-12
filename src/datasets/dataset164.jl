@@ -9,7 +9,10 @@ A struct containing UFF Dataset 164 (Units) data.
 - `units::Int`: Units code
 - `description::String`: Units description
 - `temperature_mode::Int`: Temperature mode
-- `conversion_factor::Vector{Float64}`: Units factors for converting to SI units
+- `conversion_length::Float64`: Length conversion factor
+- `conversion_force::Float64`: Force conversion factor
+- `conversion_temperature::Float64`: Temperature conversion factor
+- `conversion_temperature_offset::Float64`: Temperature offset conversion factor
 """
 @show_data struct Dataset164 <: UFFDataset
     # Fields specific to Dataset164
@@ -28,8 +31,7 @@ A struct containing UFF Dataset 164 (Units) data.
         description = "",
         temperature_mode = 0,
         conversion_factor = [1., 1., 1., 0.]
-    ) = new(:Dataset164, "Units",units, description, temperature_mode, conversion_length, 
-        conversion_force, conversion_temperature, conversion_temperature_offset)
+    ) = new(:Dataset164, "Units",units, description, temperature_mode, conversion_length, conversion_force, conversion_temperature, conversion_temperature_offset)
 end
 
 """
