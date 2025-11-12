@@ -158,7 +158,7 @@
     "href": "datasets/dataset164.html#api",
     "title": "Dataset 164 - Units",
     "section": "2 API",
-    "text": "2 API\n\n\n\nDataset164\nA struct containing UFF Dataset 164 metadata.\nFields\n\ntype::Symbol: Data set type\n\nunits::Int: Units code\n\ndescription::String: Units description\n\ntemperature_mode::Int: Temperature mode\n\nconversion_factor::Vector{Float64}: Units factors for converting to SI units",
+    "text": "2 API\n\n\n\nDataset164\nA struct containing UFF Dataset 164 (Units) data.\nFields\n\ntype::Symbol: Data set type\n\nname::String: Data set name\n\nunits::Int: Units code\n\ndescription::String: Units description\n\ntemperature_mode::Int: Temperature mode\n\nconversion_length::Float64: Length conversion factor\n\nconversion_force::Float64: Force conversion factor\n\nconversion_temperature::Float64: Temperature conversion factor\n\nconversion_temperature_offset::Float64: Temperature offset conversion factor",
     "crumbs": [
       "Datasets",
       "Dataset 164 - Units"

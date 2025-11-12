@@ -286,10 +286,12 @@ Record 2: FORMAT(3D25.17)
 <div id="6" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
 <div class="markdown"><pre><code class="language-julia">Dataset164</code></pre>
-<p>A struct containing UFF Dataset 164 metadata.</p>
+<p>A struct containing UFF Dataset 164 (Units) data.</p>
 <p><strong>Fields</strong></p>
 <ul>
 <li><p><code>type::Symbol</code>: Data set type</p>
+</li>
+<li><p><code>name::String</code>: Data set name</p>
 </li>
 <li><p><code>units::Int</code>: Units code</p>
 </li>
@@ -297,7 +299,13 @@ Record 2: FORMAT(3D25.17)
 </li>
 <li><p><code>temperature_mode::Int</code>: Temperature mode</p>
 </li>
-<li><p><code>conversion_factor::Vector{Float64}</code>: Units factors for converting to SI units</p>
+<li><p><code>conversion_length::Float64</code>: Length conversion factor</p>
+</li>
+<li><p><code>conversion_force::Float64</code>: Force conversion factor</p>
+</li>
+<li><p><code>conversion_temperature::Float64</code>: Temperature conversion factor</p>
+</li>
+<li><p><code>conversion_temperature_offset::Float64</code>: Temperature offset conversion factor</p>
 </li>
 </ul>
 
