@@ -9,7 +9,7 @@ module UFFFiles
     # Exported Types
     # Types for UFF datasets -- see https://www.ceas3.uc.edu/sdrluff/all_files.php
     export Dataset15, Dataset18, Dataset55, Dataset58, Dataset82,
-           Dataset151, Dataset164, Dataset2411, Dataset2412, Dataset2414
+           Dataset151, Dataset164, Dataset1858, Dataset2411, Dataset2412, Dataset2414
 
     # Exported functions - Main functions
     export readuff, writeuff
