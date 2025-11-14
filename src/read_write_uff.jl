@@ -11,32 +11,34 @@ Reads a UFF (Universal File Format) file and parses its contents into a vector o
 """
 function readuff(filename::String)
 
-    # Extract blocks from the UFF file
-    blocks = extract_blocks(filename)
-    nblocks = length(blocks)
-
-    # Check each block for support
-    supported_blocks = issupported.(blocks)
-    nunsup= count(.!supported_blocks)
-    nsup= nblocks - nunsup
-
     # Initialize an array to hold parsed datasets
-    data = Vector{UFFDataset}(undef, nsup)
-
-    i = 1
-    for (b, block) in enumerate(blocks)
-        # Determine dataset type from the first line of the block
-        dtype = strip(block[1])
-        if !supported_blocks[b]
-            @warn "Unsupported dataset type: $dtype - skipping this block."
-            continue
-        end
-
+    data = Vector{UFFDataset}(undef, 0)
+    # https://discourse.julialang.org/t/readline-and-end-of-file/64384/4
+    open(filename) do io
+        while !eof(io)
+            line = readline(io)
+            # Look for dataset delimiter
+            if line == "    -1"
+                # Determine dataset type from the following line & mark the position
+                mark(io)
+                line = readline(io)
+                @show(line)
+                dtype = length(line) > 6 ? strip(line[1:7]) : strip(line[1:6])
+                @show(dtype)
+                if any(dtype .== supported_datasets())
         # Parse the block based on its dataset type
         # https://stackoverflow.com/questions/34016768/julia-invoke-a-function-by-a-given-string/34023458#34023458
-        parse_dataset = getfield(UFFFiles, Symbol("parse_dataset", dtype))
-        data[i] = parse_dataset(block)
-        i += 1
+                    parse_function = getfield(UFFFiles, Symbol("parse_dataset", dtype))
+                    @show(parse_function)
+                    datatmp = parse_function(io)
+                    data = push!(data, datatmp)
+                else
+                     @warn "Unsupported dataset type: $dtype - skipping this dataset"
+                     while readline(io) != "    -1"  # Remove the -1 from the end of this dataset
+                     end
+                end
+            end
+        end
     end
 
     return data
@@ -58,6 +60,7 @@ written.
 function writeuff(filename::String, data)
     open(filename, "w") do io
         for dataset in data
+            @show(dataset, typeof(dataset))
             lines = write_dataset(dataset)
 
             # Write the formatted lines to the file

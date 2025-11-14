@@ -245,7 +245,13 @@ Universal Dataset Number: 2412
 
     232 Axisymmetric parabolic rigid surface
 """
-function parse_dataset2412(block)
+function parse_dataset2412(io)
+
+    reset(io)
+    block = String[]
+    while (line = readline(io)) != "    -1"
+        push!(block, line)
+    end
 
     elements_ID = Int[]
     fe_descriptor_id = Int[]

@@ -60,13 +60,13 @@ Universal Dataset Number: 82
                        identification line for a name.
                     6) Repeat Datasets for each Trace_Line
 """
-function parse_dataset82(block)
-    line_number, num_nodes, color = parse.(Int, split(block[2]))
-    id_line = strip(block[3])
+function parse_dataset82(io)
+    line_number, num_nodes, color = parse.(Int, split(readline(io)))
+    id_line = strip(readline(io))
 
     lblock = block[4:end]
     line_nodes = Int[]
-    for line in lblock
+    while (line = readline(io)) != "    -1"
         append!(line_nodes, parse.(Int, split(line)))
     end
 

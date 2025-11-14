@@ -718,8 +718,10 @@ function parse_dataset58(io)
     # Record 6
     r6 = readline(io)
     len_r6 = length(r6)
+    @show(r6)
+    #=r6 = split(readline(io))
 
-    #=func_type = parse(Int, strip(r6[1]))
+    func_type = parse(Int, strip(r6[1]))
     func_id = parse(Int, strip(r6[2]))
     version_num = parse(Int, strip(r6[3]))
     load_case_id = parse(Int, strip(r6[4]))
@@ -771,142 +773,77 @@ function parse_dataset58(io)
     z_axis_label, z_axis_unit_label = strip.(r11[5:6])
 
     # Record 12
-    if (ord_dtype == 2 && abs_spacing_type == 1) # Case 1 - Real, Single Precision, Even Spacing 6E13.5
-      _data = Vector{Float32}(undef, num_pts)
-      n = 6     # number of data values or (x,y) or (x, Ry, Iy) sets per line
-      fw = 13   # field width
-      for i in 1:n:num_pts
-        r12 = readline(io)
-        @show(i, r12)
-        for j in 1:n
-          i + j - 1 > num_pts && break  # break if num_pts exceeded
-          _data[i+j-1] = parse(Float32, r12[(j-1)*fw+1:j*fw])
-        end
-        @show(typeof(_data), size(_data))
-      end
-      abscissa = Float32[]
-      data = _data
 
-    elseif (ord_dtype == 2 && abs_spacing_type == 0) # Case 2 - Real, Single Precision, Uneven Spacing 6E13.5
-      _data = Vector{Float32}(undef, 2num_pts)
-      n = 6     # number of data values or (x,y) or (x, Ry, Iy) sets per line
-      fw = 13   # field width
-      for i in 1:n:2num_pts
-        r12 = readline(io)
-        #@show(i, r12)
-        for j in 1:n
-          i + j - 1 > num_pts && break  # break if num_pts exceeded
-          _data[i+j-1] = parse(Float32, r12[(j-1)*fw+1:j*fw])
-        end
-        #@show(typeof(data), size(data))
-      end
-      tmp = reshape(reinterpret(Float32, _data), (2, :))'
-      abscissa = tmp[:, 1]
-      data = tmp[:, 2]
+    data, dtype = if ord_dtype == 2
+            Float32[], Float32
+    elseif ord_dtype == 4
+            Float64[], Float64
+    elseif ord_dtype == 5
+            ComplexF32[], Float32
+    elseif ord_dtype == 6
+            ComplexF64[], Float64
+    end
 
-    elseif (ord_dtype == 5 && abs_spacing_type == 1)  # Case 3 - Complex, Single Precision, Even Spacing 6E13.5
-      _data = Vector{Float32}(undef, 2num_pts)
-      n = 6     # number of data values or (x,y) or (x, Ry, Iy) sets per line
-      fw = 13   # field width
-      for i in 1:n:2num_pts
-        r12 = readline(io)
-      # @show(i , r12)
-        for j in 1:n
-          i + j - 1 > num_pts && break  # break if num_pts exceeded
-          _data[i+j-1] = parse(Float32, r12[(j-1)*fw+1:j*fw])
-        end
-      # @show(typeof(data), size(data))
-      end
-      abscissa = Float32[]  
-      data = reinterpret(ComplexF32, _data)
+    # for dv in data_values
+    #      entries = split(dv)
+    #      _data = parse.(dtype, strip.(entries))
+    #      if ord_dtype < 5
+    #          append!(data, _data)
+    #      elseif ord_dtype == 5
+    #         append!(data, complex.(_data[1:2:end], _data[2:2:end]))
+    #      elseif ord_dtype == 6
+    #         append!(data, complex.(_data[1:2:end], _data[2:2:end]))
+    #      end
+    # end
 
-    elseif (ord_dtype == 5 && abs_spacing_type == 0)  # Case 4 - Complex, Single Precision, Uneven Spacing 6E13.5
-      _data = Vector{Float32}(undef, 3num_pts)
-      n = 6     # number of data values or (x,y) or (x, Ry, Iy) sets per line
-      fw = 13   # field width
-      for i in 1:n:3num_pts
-        r12 = readline(io)
-      # @show(i , r12)
-        for j in 1:n
-          i + j - 1 > num_pts && break  # break if num_pts exceeded
-          _data[i+j-1] = parse(Float32, r12[(j-1)*fw+1:j*fw])
-        end
-      # @show(typeof(data), size(data))
-      end
-      tmp = reshape(reinterpret(Float32, _data), (3, :))'
-      abscissa = tmp[:, 1]
-      data = reinterpret(ComplexF32, reshape(tmp[:, 2:3]', (:, 1)))
+   while (dv = readline(io)) != "    -1"
+        # Check if line contains spaces (standard format) or fixed-width fields (UFF58 specification)
+        if occursin(r"\s+", strip(dv)) && !occursin(r"^[\s\-\+\d\.E]+$", dv)
+            # Format with spaces - use standard split
+            entries = split(dv)
+            _data = parse.(dtype, strip.(entries))
+        else
+            # Format without spaces - use fixed-width positions according to UFF58 specification
+            entries = String[]
+            line = dv
 
-    elseif (ord_dtype == 2 && abs_spacing_type == 1) # Case 5 - Real, Double Precision, Even Spacing 4E20.12
-      _data = Vector{Float64}(undef, num_pts)
-      n = 4     # number of data values or (x,y) or (x, Ry, Iy) sets per line
-      fw = 20   # field width
-      for i in 1:n:num_pts
-        r12 = readline(io)
-      # @show(i , r12)
-        for j in 1:n
-          i + j - 1 > num_pts && break  # break if num_pts exceeded
-          _data[i+j-1] = parse(Float64, r12[(j-1)*fw+1:j*fw])
-        end
-      # @show(typeof(data), size(data))
-      end
-      abscissa = Float64[]  
-      data = reinterpret(Float64, _data)
+            if ord_dtype == 2 || ord_dtype == 5
+                # Single precision: E13.5 format (13 characters per value)
+                field_width = 13
+            elseif ord_dtype == 4 || ord_dtype == 6
+                # Double precision: E20.12 format (20 characters per value)
+                field_width = 20
+            end
 
-    elseif (ord_dtype == 2 && abs_spacing_type == 0) # Case 6 - Real, Double Precision, Uneven Spacing 2(E13.5,E20.12)
-      _data = Vector{Float64}(undef, 2num_pts)
-      n = 4           # number of data values or (x,y) or (x, Ry, Iy) sets per line
-      fw = [13, 20]   # field width
-      for i in 1:n:2num_pts
-        r12 = readline(io)
-      # @show(i , r12)
-        _data[i] = parse(Float64, r12[1:13])
-        _data[i+1] = parse(Float64, r12[14:33])
-        i + 2 > num_pts && break  # break if num_pts exceeded
-        _data[i] = parse(Float64, r12[34:46])
-        _data[i+1] = parse(Float64, r12[47:66])
-       # @show(typeof(data), size(data))
+            # Extract fixed-width fields
+            pos = 1
+            while pos <= length(line)
+                if pos + field_width - 1 <= length(line)
+                    field = strip(line[pos:pos+field_width-1])
+                    if !isempty(field)
+                        push!(entries, field)
                     end
-      tmp = reshape(reinterpret(Float64, _data), (2, :))'
-      abscissa = tmp[:, 1]
-      data = tmp[:, 2]
+                    pos += field_width
+                else
+                    # Last field potentially shorter
+                    field = strip(line[pos:end])
+                    if !isempty(field)
+                        push!(entries, field)
+                    end
+                    break
+                end
+            end
 
-    elseif (ord_dtype == 5 && abs_spacing_type == 1)  # Case 7 - Complex, Double Precision, Even Spacing 4E20.12
-      _data = Vector{Float64}(undef, num_pts)
-      n = 4     # number of data values or (x,y) or (x, Ry, Iy) sets per line
-      fw = 20   # field width
-      for i in 1:n:num_pts
-        r12 = readline(io)
-      # @show(i , r12)
-        for j in 1:n
-          i + j - 1 > num_pts && break  # break if num_pts exceeded
-          _data[i+j-1] = parse(Float64, r12[(j-1)*fw+1:j*fw])
+            _data = parse.(dtype, entries)
         end
-      # @show(typeof(data), size(data))
+
+        if ord_dtype < 5
+            append!(data, _data)
+        elseif ord_dtype == 5
+            append!(data, complex.(_data[1:2:end], _data[2:2:end]))
+        elseif ord_dtype == 6
+            append!(data, complex.(_data[1:2:end], _data[2:2:end]))
         end
-      abscissa = Float64[]  
-      data = reinterpret(Float64, _data)
-      abscissa = Float64[] 
-      data = reinterpret(ComplexF64, _data)
-
-    elseif (ord_dtype == 5 && abs_spacing_type == 0)  # Case 8 - Complex, Double Precision, Uneven Spacing E13.5,2E20.12
-      _data = Vector{Float64}(undef, 2num_pts)
-      n = 4           # number of data values or (x,y) or (x, Ry, Iy) sets per line
-      fw = [13, 20]   # field width
-      for i in 1:n:2num_pts
-        r12 = readline(io)
-      # @show(i , r12)
-        _data[i] = parse(Float64, r12[1:13])
-        _data[i+1] = parse(Float64, r12[14:33])
-        i + 2 > num_pts && break  # break if num_pts exceeded
-        _data[i] = parse(Float64, r12[34:46])
-        _data[i+1] = parse(Float64, r12[47:66])
-       # @show(typeof(data), size(data))
-      end
-      _data = reshape(reinterpret(Float32, _data), (3, :))'
-      abscissa = _data[:, 1]
-      data = reinterpret(ComplexF64, reshape(_data[:, 2:3]', (:, 1)))
-
     end
 
     nd = length(data)
@@ -915,8 +852,6 @@ function parse_dataset58(io)
             data = data[1:num_pts]
         end
     end
-    # Consume the trailing "    -1"
-    readline(io)
 
     return Dataset58(
         id1,
@@ -1092,53 +1027,39 @@ function write_dataset(dataset::Dataset58)
             end
             push!(lines, line)
         end
-    elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 1)  # Case 3 - Complex, Single Precision, Even Spacing
-      # Complex single precision even: 6E13.5 (3 complex values per line)
-      y_pair_per_line = 3
-      for i in 1:y_pair_per_line:length(dataset.data)
-            ie = min(i + y_pair_per_line - 1, length(dataset.abscissa))
-            line = join([@sprintf(" %12.5E %12.5E", real(v), imag(v)) for v in dataset.data[i:ie]])
-            push!(lines, line)
-      end
-    elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 0)  # Case 4 - Complex, Single Precision, Uneven Spacing
-      # Complex single precision uneven: 6E13.5 (3 complex values per line)
-      xy_pair_per_line = 2
-      for i in 1:xy_pair_per_line:length(dataset.data)
-            ie = min(i + xy_pair_per_line - 1, length(dataset.abscissa))
-            line = join([@sprintf(" %12.5E %12.5E %12.5E", a, real(o), imag(o)) for (a, o) in zip(dataset.abscissa[i:ie], dataset.data[i:ie])])
-            push!(lines, line)
-      end
-    elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 1) # Case 5 - Real, Double Precision, Even Spacing
-      # Real double precision even: 4E20.12
-      y_values_per_line = 4
-      for i in 1:y_values_per_line:length(dataset.data)
-            ie = min(i + y_values_per_line - 1, length(dataset.data))
-            chunk = dataset.data[i:ie]
-            line = join([@sprintf(" %19.12E", v) for v in chunk], "")
-            push!(lines, line)
-      end
-    elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 0) # Case 6 - Real, Double Precision, Uneven Spacing
-      # Real double precision uneven: 2(E13.5,E20.12)
-      xy_pair_per_line = 2
-      for i in 1:xy_pair_per_line:length(dataset.data)
-            ie = min(i + xy_pair_per_line - 1, length(dataset.abscissa))
-            line = join([@sprintf(" %12.5E %19.12E", a, o) for (a, o) in zip(dataset.abscissa[i:ie], dataset.data[i:ie])])
-            push!(lines, line)
-      end
-    elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 1)  # Case 7 - Complex, Double Precision, Even Spacing
-      # Complex double precision even: 4E20.12 (2 complex values per line)
-      y_pair_per_line = 3
-      for i in 1:y_pair_per_line:length(dataset.data)
-            ie = min(i + y_pair_per_line - 1, length(dataset.abscissa))
-            line = join([@sprintf(" %19.12E %19.12E", real(v), imag(v)) for v in dataset.data[i:ie]])
-            push!(lines, line)
-      end
-     elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 0)  # Case 8 - Complex, Double Precision, Uneven Spacing
-      # Complex double precision uneven: E13.5,2E20.12 (1 complex values per line)
-      xy_pair_per_line = 1
-      for i in 1:xy_pair_per_line:length(dataset.data)
-            ie = min(i + xy_pair_per_line - 1, length(dataset.abscissa))
-            line = join([@sprintf(" %12.5E %19.12E %19.12E", a, real(o), imag(o)) for (a, o) in zip(dataset.abscissa[i:ie], dataset.data[i:ie])])
+
+    elseif dataset.ord_dtype == 5 || dataset.ord_dtype == 6
+        # Complex data (single or double precision)
+        if dataset.ord_dtype == 5
+            # Complex single precision: 6E13.5 (3 complex values per line)
+            values_per_line = 3
+        else
+            # Complex double precision: 4E20.12 (2 complex values per line)
+            values_per_line = 2
+        end
+
+        # Write data in chunks (real and imaginary parts interleaved)
+        for i in 1:values_per_line:length(dataset.data)
+            end_idx = min(i + values_per_line - 1, length(dataset.data))
+            chunk = dataset.data[i:end_idx]
+
+            if dataset.ord_dtype == 5
+                # 6E13.5 format
+                parts = Float64[]
+                for c in chunk
+                    push!(parts, real(c))
+                    push!(parts, imag(c))
+                end
+                line = join([@sprintf(" %12.5E", v) for v in parts], "")
+            else
+                # 4E20.12 format
+                parts = Float64[]
+                for c in chunk
+                    push!(parts, real(c))
+                    push!(parts, imag(c))
+                end
+                line = join([@sprintf(" %19.12E", v) for v in parts], "")
+            end
             push!(lines, line)
         end
     end

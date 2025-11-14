@@ -48,21 +48,24 @@ Universal Dataset Number: 2411
 
     Records 1 and 2 are repeated for each node in the model.
 """
-function parse_dataset2411(block)
+function parse_dataset2411(io)
     # Initialize empty arrays to hold the parsed data
-    nnodes = (length(block) - 1) ÷ 2
-    nodes_ID = zeros(Int, nnodes)
+
+    nodes_ID = Int[]
     coord_system = similar(nodes_ID)
     disp_coord_system = similar(nodes_ID)
     color = similar(nodes_ID)
-    node_coords = zeros(nnodes, 3)
+    node_coords = Matrix{Float64}(undef, 0, 3)
+    
+    while (r1 = readline(io)) != "    -1"
+        tmp = parse.(Int, split(r1))
+        push!(nodes_ID, tmp[1])
+        push!(coord_system, tmp[2])
+        push!(disp_coord_system, tmp[3])
+        push!(color, tmp[4])
 
-    record1 = block[2:2:end]
-    record2 = block[3:2:end]
-
-    for (i, (r1, r2)) in enumerate(zip(record1, record2))
-        nodes_ID[i], coord_system[i], disp_coord_system[i], color[i] = parse.(Int, split(r1))
-        node_coords[i, :] = parse.(Float64, split(r2))
+        r2 = readline(io)
+        node_coords = vcat(node_coords, parse.(Float64, split(r2))')
     end
 
     return Dataset2411(

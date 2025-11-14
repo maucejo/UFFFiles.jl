@@ -429,22 +429,22 @@ Universal Dataset Number: 55
                       Translations Or 6 DOF Translation And Rotation With
                       Unused Values = 0.
 """
-function parse_dataset55(block)
+function parse_dataset55(io)
      # Parse Record 1 to 5
-     id1 = strip(block[2])
-     id2 = strip(block[3])
-     id3 = strip(block[4])
-     id4 = strip(block[5])
-     id5 = strip(block[6])
+     id1 = strip(readline(io))
+     id2 = strip(readline(io))
+     id3 = strip(readline(io))
+     id4 = strip(readline(io))
+     id5 = strip(readline(io))
 
      # Parse Record 6
-     model_type, analysis_type, data_charac, spec_dtype, dtype, ndv_per_node = parse.(Int, split(strip(block[7])))
+     model_type, analysis_type, data_charac, spec_dtype, dtype, ndv_per_node = parse.(Int, split(strip(readline(io))))
 
      # Parse Record 7
-     r7_raw = parse.(Int, split(strip(block[8])))
+     r7_raw = parse.(Int, split(strip(readline(io))))
 
      # Parse Record 8
-     r8_raw = parse.(Float64, split(strip(block[9])))
+     r8_raw = parse.(Float64, split(strip(readline(io))))
 
      # Parse Record 9 and 10
      node_number = Int[]
@@ -455,18 +455,16 @@ function parse_dataset55(block)
      end
 
      # Start parsing from Record 9 and 10
-     i = 10
-     nlines = length(block)
-     _data =  similar(eltype(data), 0)
-     while i ≤ nlines
+     _data = similar(eltype(data), 0)
+     while (record09 = readline(io)) != "    -1"
           # Record 9
-          push!(node_number, parse(Int, strip(block[i])))
+          push!(node_number, parse(Int, strip(record09)))
 
           # Record 10
+          record10 = readline(io)
           nv = 0
           while nv < ndv
-               i += 1
-               r10 = parse.(Float64, split(strip(block[i])))
+               r10 = parse.(Float64, split(strip(record10)))
                nv += length(r10)
 
                if dtype == 2
@@ -478,7 +476,6 @@ function parse_dataset55(block)
 
           push!(data, copy(_data))
           empty!(_data)
-          i += 1
      end
 
      return Dataset55(

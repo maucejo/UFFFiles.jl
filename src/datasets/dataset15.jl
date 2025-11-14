@@ -46,8 +46,7 @@ Universal Dataset Number: 15
 
              NOTE:  Repeat record for each node
 """
-function parse_dataset15(block)
-    nlines = length(block)
+function parse_dataset15(io)
 
     node_ID = Int[]
     def_cs_num = Int[]
@@ -55,9 +54,8 @@ function parse_dataset15(block)
     color = Int[]
     coords = Vector{Float64}[]
 
-    i = 2
-    while i ≤ nlines
-        r1 = split(block[i])
+    while  (line = readline(io)) != "    -1"
+        r1 = split(line)
         nid, dcs, disp_cs, col = parse.(Int, strip.(r1[1:4]))
         x, y, z = parse.(Float64, strip.(r1[5:end]))
 
@@ -66,8 +64,6 @@ function parse_dataset15(block)
         push!(disp_cs_num, disp_cs)
         push!(color, col)
         push!(coords, [x, y, z])
-
-        i += 1
     end
 
     return Dataset15(

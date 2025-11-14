@@ -70,8 +70,7 @@ Universal Dataset Number: 18
 
 Records 1 thru 3 are repeated for each coordinate system in the model.
 """
-function parse_dataset18(block)
-    nlines = length(block)
+function parse_dataset18(io)
 
     cs_num = Int[]
     cs_type = Int[]
@@ -83,10 +82,9 @@ function parse_dataset18(block)
     cs_x = Vector{Float64}[]
     cs_xz = Vector{Float64}[]
 
-    i = 2 # Start after the dataset type line
-    while i ≤ nlines
+    while  (line = readline(io)) != "    -1"
         # Parse record 1
-        csn, cst, ref_csn, col, md = parse.(Int, split(strip(block[i])))
+        csn, cst, ref_csn, col, md = parse.(Int, split(line))
         push!(cs_num, csn)
         push!(cs_type, cst)
         push!(ref_cs_num, ref_csn)
@@ -94,20 +92,18 @@ function parse_dataset18(block)
         push!(method_def, md)
 
         # Parse record 2
-        i += 1
-        push!(cs_name, strip(block[i]))
+        push!(cs_name, strip(readline(io)))
 
         # Parse record 3
         _cs_params = Float64[]
         for _ in 1:2
-            i += 1
-            append!(_cs_params, parse.(Float64, split(strip(block[i]))))
+            append!(_cs_params, parse.(Float64, split(strip(readline(io)))))
         end
         push!(cs_origin, _cs_params[1:3])
         push!(cs_x, _cs_params[4:6])
         push!(cs_xz, _cs_params[7:9])
 
-        i += 1 # Move to the next coordinate system
+        # Move to the next coordinate system
     end
 
     return Dataset18(

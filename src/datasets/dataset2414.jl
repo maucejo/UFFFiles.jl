@@ -800,7 +800,14 @@ Universal Dataset Number: 2414
            Imaginary part of stiffness                                    X
 ----------------------------------------------------------------------
 """
-function parse_dataset2414(block)
+function parse_dataset2414(io)
+
+    reset(io)
+    block = String[]
+    while (line = readline(io)) != "    -1"
+        push!(block, line)
+    end
+    
     nlines = length(block)
 
     analysis_dlabel = parse(Int, strip(block[2]))

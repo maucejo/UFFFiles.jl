@@ -11,6 +11,7 @@ A struct containing UFF Dataset 151 (Header) data.
 - `application::String`: Program which created the dataset
 - `datetime_created::DateTime`: dataset creation date and time
 - `version::String`: version from dataset
+- `version2::String`: version from dataset
 - `file_type::Int`: file type
 - `datetime_last_saved::DateTime`: dataset last saved date and time
 - `program::String`: program which created uff file
@@ -24,7 +25,8 @@ A struct containing UFF Dataset 151 (Header) data.
     description::String             # Record 2 - field 1
     application::String             # Record 3 - field 1
     datetime_created::String        # Record 4 - fields 1 and 2
-    version::String                 # Record 4 - fields 3 and 4
+    version::Int                    # Record 4 - fields 3
+    version2::Int                   # Record 4 - fields 4
     file_type::Int                  # Record 4 - field 5
     datetime_last_saved::String     # Record 5 - fields 1 and 2
     program::String                 # Record 6 - field 1
@@ -35,12 +37,13 @@ A struct containing UFF Dataset 151 (Header) data.
         description = "",
         application = "",
         datetime_created = "",
-        version = "",
+        version = 0,
+        version2 = 0,
         file_type = 0,
         datetime_last_saved = "",
         program = "",
         datetime_written = ""
-    ) = new(:Dataset151, "Header", model_name, description, application, datetime_created, version, file_type, datetime_last_saved, program, datetime_written)
+    ) = new(:Dataset151, "Header", model_name, description, application, datetime_created, version, version2, file_type, datetime_last_saved, program, datetime_written)
 end
 
 """
@@ -78,24 +81,27 @@ Universal Dataset Number: 151
                 Field 1      -- date universal file written (DD-MMM-YY)
                 Field 2      -- time universal file written (HH:MM:SS)
 """
-function parse_dataset151(block)
-    model_name = strip(block[2])
-    description = strip(block[3])
-    application = strip(block[4])
+function parse_dataset151(io)
+    model_name = strip(readline(io))  # Record 1
+    description = strip(readline(io))  # Record 2
+    application = strip(readline(io))  # Record 3
 
     # Record 4 contains multiple fields in one line
-    line_creation = extend_line(strip(block[5]))
-    datetime_created = strip(line_creation[1:20])
-    version = strip(line_creation[21:40])
-    if isempty(strip(line_creation[41:end]))
-        file_type = 0
-    else
-        file_type = parse(Int, strip(line_creation[41:end]))
-    end
+    line_creation = extend_line(readline(io))
+    datetime_created = strip(line_creation[1:20])   # Field 1 & 2
+    # compensate for files that only have date in Record 4
+    tmp = strip(line_creation[21:30])
+    version = isempty(tmp) ? 0 : parse(Int, tmp)    # Field 3
+    tmp = strip(line_creation[31:40])
+    version2 = isempty(tmp) ? 0 : parse(Int, tmp)    # Field 4
+    tmp = strip(line_creation[41:50])
+    file_type = isempty(tmp) ? 0 : parse(Int, tmp)   # Field 5
 
-    datetime_last_saved = strip(block[6])
-    program = strip(block[7])
-    datetime_written = strip(block[8])
+    datetime_last_saved = strip(readline(io))   # Record 5
+    program = strip(readline(io))               # Record 6
+    datetime_written = strip(readline(io))      # Record 7
+
+    _ = readline(io)    # Read trailing "    -1"
 
     return Dataset151(
         model_name,
@@ -103,6 +109,7 @@ function parse_dataset151(block)
         application,
         datetime_created,
         version,
+        version2,
         file_type,
         datetime_last_saved,
         program,
@@ -129,35 +136,61 @@ function write_dataset(dataset::Dataset151)
     push!(lines, "   151")
 
     # Record 1: FORMAT(80A1) - model file name
-    push!(lines, dataset.model_name)
+    push!(lines, extend_line(dataset.model_name))
 
     # Record 2: FORMAT(80A1) - model file description (empty line if no description)
-    push!(lines, dataset.description)
+    push!(lines, extend_line(dataset.description))
 
     # Record 3: FORMAT(80A1) - program which created DB
-    push!(lines, dataset.application)
+    push!(lines, extend_line(dataset.application))
 
-    # Record 4: FORMAT(10A1,10A1,3I10) - date/time created, version, file_type
+    # Record 4: FORMAT(10A1,10A1,3I10) - date/time created, version, version, file_type
     # The datetime_created field should already contain both date and time
     # The version field should be formatted as two 10-character fields
     # File type should be formatted as I10
     record4 = dataset.datetime_created
-    if !isempty(dataset.version)
-        record4 *= dataset.version
+    # the commented out lines appear to compensate for a badly formatted dataset151
+    #=if !isempty(dataset.version)
+        record4 *= dataset.datetime_created
+    end
+    if !isempty(dataset.version2)
+        record4 *= dataset.version2
     end
     if dataset.file_type != 0
         record4 *= @sprintf("%10d", dataset.file_type)
-    end
+    end=#
+
+    record4 = @sprintf("%-10s%-10s%10i%10i%10i%30s", 
+                    split(dataset.datetime_created)[1], 
+                    split(dataset.datetime_created)[2], 
+                    dataset.version, 
+                    dataset.version2, 
+                    dataset.file_type,
+                    " "
+                    )
+
     push!(lines, record4)
 
     # Record 5: FORMAT(10A1,10A1) - date/time last saved
-    push!(lines, dataset.datetime_last_saved)
+    record5 = @sprintf("%-10s%-10s%60s", 
+                    split(dataset.datetime_last_saved)[1], 
+                    split(dataset.datetime_last_saved)[2], 
+                    " "
+                    )
+
+    push!(lines, record5)
 
     # Record 6: FORMAT(80A1) - program which created universal file
-    push!(lines, dataset.program)
+    push!(lines, extend_line(dataset.program))
 
     # Record 7: FORMAT(10A1,10A1) - date/time written
-    push!(lines, dataset.datetime_written)
+    record7 = @sprintf("%-10s%-10s%60s", 
+                    Dates.format(now(), "dd-uuu-yy"), 
+                    Dates.format(now(), "HH:MM:SS"),
+                    " "
+                    )
+
+    push!(lines, record7)
 
     # Write footer
     push!(lines, "    -1")

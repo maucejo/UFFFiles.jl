@@ -45,7 +45,7 @@ end
 """
     extend_line(line::String) -> String
 
-Extends a line to 80 characters by adding spaces if it is shorter than 80 characters.
+Extends a line to 80 characters by adding spaces if it is shorter than 80 characters and trim to 80 if req'd.
 
 **Input**
 - `line::String`: The line to be extended.
@@ -59,6 +59,8 @@ function extend_line(line)
     if nl < 80
         line *= " "^(80 - nl)
     end
+
+    line = length(line) > 80 ? line[1:80] : line
 
     return line
 end

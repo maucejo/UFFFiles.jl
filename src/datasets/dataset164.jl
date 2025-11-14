@@ -9,10 +9,10 @@ A struct containing UFF Dataset 164 (Units) data.
 - `units::Int`: Units code
 - `description::String`: Units description
 - `temperature_mode::Int`: Temperature mode
-- `conversion_length::Float64`: Length conversion factor
-- `conversion_force::Float64`: Force conversion factor
-- `conversion_temperature::Float64`: Temperature conversion factor
-- `conversion_temperature_offset::Float64`: Temperature offset conversion factor
+- `conversion_length::Float64`: Units factors for converting to SI units
+- `conversion_force::Float64`: Units factors for converting to SI units
+- `conversion_temperature::Float64`: Units factors for converting to SI units
+- `conversion_temperature_offset::Float64`: Units factors for converting to SI units
 """
 @show_data struct Dataset164 <: UFFDataset
     # Fields specific to Dataset164
@@ -30,8 +30,12 @@ A struct containing UFF Dataset 164 (Units) data.
         units = 1,
         description = "",
         temperature_mode = 0,
-        conversion_factor = [1., 1., 1., 0.]
-    ) = new(:Dataset164, "Units",units, description, temperature_mode, conversion_length, conversion_force, conversion_temperature, conversion_temperature_offset)
+        conversion_length = 1.0, 
+        conversion_force = 1.0, 
+        conversion_temperature = 1.0, 
+        conversion_temperature_offset = 0.0
+        ) = new(:Dataset164, "Units", units, description, temperature_mode, conversion_length, 
+        conversion_force, conversion_temperature, conversion_temperature_offset)
 end
 
 """
@@ -65,14 +69,15 @@ Universal Dataset Number: 164
                 Field 3      -- temperature
                 Field 4      -- temperature offset
 """
-function parse_dataset164(block)
-    record1 = extend_line(strip(block[2]))
-    units = parse(Int, record1[1])
-    description = strip(record1[2:29])
-    temperature_mode = parse(Int, strip(record1[31:end]))
+function parse_dataset164(io)
+    record1 = extend_line(readline(io))   
+    units = parse(Int, record1[1:10])
+    description = strip(record1[11:30])
+    temperature_mode = parse(Int, strip(record1[31:40]))
+    (conversion_length, conversion_force, conversion_temperature) = parse.(Float64, split(replace(readline(io), "D" => "E")))
+    conversion_temperature_offset = parse(Float64, strip(replace(readline(io), "D" => "E")))
 
-    (conversion_length, conversion_force, conversion_temperature) .= parse.(Float64, split(replace(block[3], "D" => "E")))
-    conversion_temperature_offset = parse(Float64, strip(replace(block[4], "D" => "E")))
+    _ = readline(io)    # Read trailing "    -1"
 
     return Dataset164(
         units,

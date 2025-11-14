@@ -1,5 +1,7 @@
 module UFFFiles
-    using FileIO, Printf
+    using Dates
+    using FileIO
+    using Printf
 
     # Base UFFDataset abstract type
     abstract type UFFDataset end
@@ -23,10 +25,13 @@ module UFFFiles
     include("datasets/dataset15.jl")
     include("datasets/dataset18.jl")
     include("datasets/dataset55.jl")
+    include("datasets/dataset58common.jl")
     include("datasets/dataset58.jl")
+    include("datasets/dataset58b.jl")
     include("datasets/dataset82.jl")
     include("datasets/dataset151.jl")
     include("datasets/dataset164.jl")
+    include("datasets/dataset1858.jl")
     include("datasets/dataset2411.jl")
     include("datasets/dataset2412.jl")
     include("datasets/dataset2414.jl")
