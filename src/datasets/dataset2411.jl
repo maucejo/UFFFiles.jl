@@ -27,7 +27,7 @@ A struct containing UFF Dataset 2411 (Nodes - Double precision) data.
         coord_system = Int[],
         disp_coord_system = Int[],
         color = Int[],
-        node_coords = Matrix{Float64}[]
+        node_coords = Matrix{Float64}(undef, 0, 0)
     ) = new(:Dataset2411, "Nodes - Double precision",nodes_ID, coord_system, disp_coord_system, color, node_coords)
 end
 

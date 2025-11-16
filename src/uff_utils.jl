@@ -65,6 +65,14 @@ end
 
 """
     issupported(block::Vector{String}) -> Bool
+
+Checks if the dataset type in the given block is supported.
+
+**Input**
+- `block::Vector{String}`: A vector of strings representing a block of data.
+
+**Output**
+- `Bool`: `true` if the dataset type is supported, `false` otherwise.
 """
 function issupported(block::Vector{String})
     dtype = parse(Int, strip(block[1]))
