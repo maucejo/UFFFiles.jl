@@ -1019,7 +1019,3 @@ function write_dataset58_data(io, dataset::Dataset58)
 
     return nothing
 end
-
-function parse_dataset58b(block)
-    error("Binary parsing for Dataset 58 is not yet implemented.")
-end
