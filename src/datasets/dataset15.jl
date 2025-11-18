@@ -20,15 +20,15 @@ A struct containing UFF Dataset 15 (Nodes) data .
     def_cs_num::Vector{Int}          # Record 1 - field 2
     disp_cs_num::Vector{Int}         # Record 1 - field 3
     color::Vector{Int}               # Record 1 - field 4
-    coords::Vector{Vector{Float64}}  # Record 1 - fields 5 to 7
+    node_coords::Matrix{Float64}  # Record 1 - fields 5 to 7
 
     Dataset15(
         node_ID = Int[],
         def_cs_num = Int[],
         disp_cs_num = Int[],
         color = Int[],
-        coords = Vector{Float64}[]
-    ) = new(:Dataset15, "Nodes", node_ID, def_cs_num, disp_cs_num, color, coords)
+        node_coords = Matrix{Float64}(undef, 0, 0)
+    ) = new(:Dataset15, "Nodes", node_ID, def_cs_num, disp_cs_num, color, node_coords)
 end
 
 """
@@ -52,7 +52,7 @@ function parse_dataset15(io)
     def_cs_num = Int[]
     disp_cs_num = Int[]
     color = Int[]
-    coords = Vector{Float64}[]
+    node_coords = Vector{Float64}[]
 
     while  (line = readline(io)) != "    -1"
         r1 = split(line)
@@ -71,7 +71,7 @@ function parse_dataset15(io)
         def_cs_num,
         disp_cs_num,
         color,
-        coords
+        reduce(hcat, node_coords)'
     )
 end
 

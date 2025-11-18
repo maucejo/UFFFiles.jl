@@ -12,6 +12,8 @@ format:
 
 - `conversion_factors` field in `Dataset164` struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to [@JakeZw](https://github.com/Spectrum-Tec) for submitting the PR.
 
+- `node_coords` field in `Dataset15` struct has been changed from `Vector{Vector{Float64}}` to `Matrix{Float64}` for easier manipulation of node coordinates and consistency with `Dataset2411`.
+
 
 ## v0.2.1
 
