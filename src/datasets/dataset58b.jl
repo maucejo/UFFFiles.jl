@@ -95,19 +95,18 @@ The format of this line should remain constant for any other dataset
 that takes on a binary format in the future.
 """
 function parse_dataset58b(io)
-   
+   # this function should be able to read the abscissa for uneven datasets if they are Float32 or Float64.
     reset(io)
     func = readline(io)
+    n, _, type, endian, floating_point_format, num_ascii_lines, binary_bytes, _... = @scanf(func, "%6i%c%6i%6i%12i%12i%6i%6i%12i%12i", 
+        Int, Char, Int, Int, Int, Int, Int, Int, Int, Int)
     
     # Need to implement proper error handling
-    endian = parse(Int, func[8:13])  # Julia only runs on little endian (as far as I am aware) [I6]
+    type == 'b' || error("Expected UFF58 binary file but type is $type")
     endian == 1 || println("Only implemented for Little Endian")
-    floating_point_format = parse(Int, func[14:19]) # Floating Point Format [I6]
-    floating_point_format == 1 || println("Only implemented for IEEE 754")
-    num_ascii_lines = parse(Int, func[20:31])   # number of ASCII lines following  [I12]
-    num_ascii_lines == 1 || println("Header not correct")
-    binary_bytes = parse(Int, func[32:43])         # number of bytes following ASCII lines  [I12]
-
+    floating_point_format == 2 || println("Only implemented for IEEE 754")
+    num_ascii_lines == 11 || println("Header not correct")
+   
     id1 = strip(readline(io))
     id2 = strip(readline(io))
     id3 = strip(readline(io))
@@ -116,60 +115,34 @@ function parse_dataset58b(io)
 
     # Record 6
     r6 = readline(io)
-    len_r6 = length(r6)
-    #=r6 = split(readline(io))
-
-    func_type = parse(Int, strip(r6[1]))
-    func_id = parse(Int, strip(r6[2]))
-    version_num = parse(Int, strip(r6[3]))
-    load_case_id = parse(Int, strip(r6[4]))
-    response_entity = strip(r6[5])
-    response_node = parse(Int, strip(r6[6]))
-    response_direction = parse(Int, strip(r6[7]))
-    reference_entity = strip(r6[8])=#
-    # This modified for the space in Sample_UFF58b_bin.uff record 6 field 5
-    func_type = parse(Int, r6[1:5])
-    func_id = parse(Int, r6[6:15])
-    version_num = parse(Int, r6[16:20])
-    load_case_id = parse(Int, r6[21:30])
-    response_entity = r6[32:41]
-    # @show(r6[32:41])
-    response_node = parse(Int, r6[42:51])
-    response_direction = parse(Int, r6[52:55])
-    reference_entity = r6[57:66]
-
-    if len_r6 > 8
-        reference_node = parse(Int, r6[67:76])
-        reference_direction = parse(Int, r6[77:80])
-    else
-        reference_node = 0
-        reference_direction = 0
-    end
+    n, func_type, func_id, version_num, load_case_id, _, 
+        response_entity, response_node, response_direction, _, 
+        reference_entity, reference_node,  reference_direction= 
+        @scanf(r6, "%5i%10i%5i%10i%c%10c%10i%4i%c%10c%10i%4i", Int, Int, Int, Int, Char, String, Int, Int, Char, String, Int, Int)
 
     # Record 7
-    r7 = split(readline(io))
-    ord_dtype, num_pts, abs_spacing_type = parse.(Int, strip.(r7[1:3]))
-    abs_min, abs_increment, zval = parse.(Float64, strip.(r7[4:6]))
+    r7 = (readline(io))
+    n, ord_dtype, num_pts, abs_spacing_type, abs_min, abs_increment, zval = @scanf(r7, "%10i%10i%10i%13e%13e%13e", Int, Int, Int, Float64, Float64, Float64)
 
     # Record 8
-    r8 = split(readline(io))
-    abs_spec_dtype, abs_len_unit_exp, abs_force_unit_exp, abs_temp_unit_exp = parse.(Int, strip.(r8[1:4]))
-    abs_axis_label, abs_axis_unit_label = strip.(r8[5:6])
+    r8 = (readline(io))
+    n, abs_spec_dtype, abs_len_unit_exp, abs_force_unit_exp, abs_temp_unit_exp, _, abs_axis_label, _, abs_axis_unit_label = 
+        @scanf(r8, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
 
     # Record 9
-    r9 = split(readline(io))
-    ord_spec_dtype, ord_len_unit_exp, ord_force_unit_exp, ord_temp_unit_exp = parse.(Int, strip.(r9[1:4]))
-    ord_axis_label, ord_axis_unit_label = strip.(r9[5:6])
+    r9 = (readline(io))
+    n, ord_spec_dtype, ord_len_unit_exp, ord_force_unit_exp, ord_temp_unit_exp, _, ord_axis_label, _, ord_axis_unit_label = 
+        @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
 
     # Record 10
-    r10 = split(readline(io))
-    ord_denom_spec_dtype, ord_denom_len_unit_exp, ord_denom_force_unit_exp, ord_denom_temp_unit_exp = parse.(Int, strip.(r10[1:4]))
-    ord_denom_axis_label, ord_denom_axis_unit_label = strip.(r10[5:6])
+    r10 = (readline(io))
+    n, ord_denom_spec_dtype, ord_denom_len_unit_exp, ord_denom_force_unit_exp, ord_denom_temp_unit_exp, _, ord_denom_axis_label, _, ord_denom_axis_unit_label = 
+        @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
 
     # Record 11
-    r11 = split(readline(io))
-    z_spec_dtype, z_len_unit_exp, z_force_unit_exp, z_temp_unit_exp = parse.(Int, strip.(r11[1:4]))
-    z_axis_label, z_axis_unit_label = strip.(r11[5:6])
+    r11 = (readline(io))
+    n, z_spec_dtype, z_len_unit_exp, z_force_unit_exp, z_temp_unit_exp, _, z_axis_label, _, z_axis_unit_label = 
+        @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
 
     # Record 12
     _data = read(io, binary_bytes)
@@ -267,157 +240,35 @@ function parse_dataset58b(io)
     )
 end
 
-function write_dataset58(dataset::Dataset58)
-    lines = String[]
-
-    # Start marker
-    push!(lines, "    -1")
-
-    # Dataset number
-    push!(lines, "    58")
-
-    # Records 1-5: ID Lines (80A1 format)
-    push!(lines, dataset.id1)
-    push!(lines, dataset.id2)
-    push!(lines, dataset.id3)
-    push!(lines, dataset.id4)
-    push!(lines, dataset.id5)
-
-    # Record 6: DOF Identification
-    # Format: 2(I5,I10),2(1X,10A1,I10,I4)
-    r6_line = @sprintf("%5d%10d%5d%10d %-10s%10d%4d %-10s%10d%4d",
-        dataset.func_type,
-        dataset.func_id,
-        dataset.ver_num,
-        dataset.load_case,
-        dataset.resp_name,
-        dataset.resp_node,
-        dataset.resp_dir,
-        dataset.ref_name,
-        dataset.ref_node,
-        dataset.ref_dir)
-    push!(lines, r6_line)
-
-    # Record 7: Data Form
-    # Format: 3I10,3E13.5
-    r7_line = @sprintf("%10d%10d%10d%13.5E%13.5E%13.5E",
-        dataset.ord_dtype,
-        dataset.num_pts,
-        dataset.abs_spacing_type,
-        dataset.abs_min,
-        dataset.abs_increment,
-        dataset.zval)
-    push!(lines, r7_line)
-
-    # Record 8: Abscissa Data Characteristics
-    # Format: I10,3I5,2(1X,20A1)
-    r8_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
-        dataset.abs_spec_dtype,
-        dataset.abs_len_unit_exp,
-        dataset.abs_force_unit_exp,
-        dataset.abs_temp_unit_exp,
-        dataset.abs_axis_label,
-        dataset.abs_axis_unit_label)
-    push!(lines, r8_line)
-
-    # Record 9: Ordinate Data Characteristics
-    # Format: I10,3I5,2(1X,20A1)
-    r9_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
-        dataset.ord_spec_dtype,
-        dataset.ord_len_unit_exp,
-        dataset.ord_force_unit_exp,
-        dataset.ord_temp_unit_exp,
-        dataset.ord_axis_label,
-        dataset.ord_axis_unit_label)
-    push!(lines, r9_line)
-
-    # Record 10: Ordinate Denominator Data Characteristics
-    # Format: I10,3I5,2(1X,20A1)
-    r10_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
-        dataset.ord_denom_spec_dtype,
-        dataset.ord_denom_len_unit_exp,
-        dataset.ord_denom_force_unit_exp,
-        dataset.ord_denom_temp_unit_exp,
-        dataset.ord_denom_axis_label,
-        dataset.ord_denom_axis_unit_label)
-    push!(lines, r10_line)
-
-    # Record 11: Z-axis Data Characteristics
-    # Format: I10,3I5,2(1X,20A1)
-    r11_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
-        dataset.z_spec_dtype,
-        dataset.z_len_unit_exp,
-        dataset.z_force_unit_exp,
-        dataset.z_temp_unit_exp,
-        dataset.z_axis_label,
-        dataset.z_axis_unit_label)
-    push!(lines, r11_line)
-
+function write_dataset58b_data(io, dataset)    
     # Record 12: Data Values
     # Format depends on ordinate data type and precision
-    if dataset.ord_dtype == 2 || dataset.ord_dtype == 4
-        # Real data (single or double precision)
-        if dataset.ord_dtype == 2
-            # Real single precision: 6E13.5
-            values_per_line = 6
-            fmt = "E13.5"
-        else
-            # Real double precision: 4E20.12
-            values_per_line = 4
-            fmt = "E20.12"
-        end
 
-        # Write data in chunks
-        for i in 1:values_per_line:length(dataset.data)
-            end_idx = min(i + values_per_line - 1, length(dataset.data))
-            chunk = dataset.data[i:end_idx]
-
-            if dataset.ord_dtype == 2
-                line = join([@sprintf(" %12.5E", v) for v in chunk], "")
-            else
-                line = join([@sprintf(" %19.12E", v) for v in chunk], "")
-            end
-            push!(lines, line)
-        end
-
-    elseif dataset.ord_dtype == 5 || dataset.ord_dtype == 6
-        # Complex data (single or double precision)
-        if dataset.ord_dtype == 5
-            # Complex single precision: 6E13.5 (3 complex values per line)
-            values_per_line = 3
-        else
-            # Complex double precision: 4E20.12 (2 complex values per line)
-            values_per_line = 2
-        end
-
-        # Write data in chunks (real and imaginary parts interleaved)
-        for i in 1:values_per_line:length(dataset.data)
-            end_idx = min(i + values_per_line - 1, length(dataset.data))
-            chunk = dataset.data[i:end_idx]
-
-            if dataset.ord_dtype == 5
-                # 6E13.5 format
-                parts = Float64[]
-                for c in chunk
-                    push!(parts, real(c))
-                    push!(parts, imag(c))
-                end
-                line = join([@sprintf(" %12.5E", v) for v in parts], "")
-            else
-                # 4E20.12 format
-                parts = Float64[]
-                for c in chunk
-                    push!(parts, real(c))
-                    push!(parts, imag(c))
-                end
-                line = join([@sprintf(" %19.12E", v) for v in parts], "")
-            end
-            push!(lines, line)
-        end
+    if (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 1) # Case 1 - Real, Single Precision, Even Spacing
+        write(io, Float32.(dataset.data))
+    elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 0) # Case 2 - Real, Single Precision, Uneven Spacing
+        tmp = Float32.(reshape(reduce(vcat, [dataset.abscissa', dataset.data']), :, 1))
+        write(io, tmp)
+    elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 1)  # Case 3 - Complex, Single Precision, Even Spacing
+        tmp = Float32.(reshape(reduce(vcat, [real(dataset.data)', imag(dataset.data)']), :, 1))
+        write(io, tmp)
+    elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 0)  # Case 4 - Complex, Single Precision, Uneven Spacing
+        tmp = Float32.(reshape(reduce(vcat, [dataset.abscissa', real(dataset.data)', imag(dataset.data)']), :, 1))
+        write(io, tmp)
+    elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 1) # Case 5 - Real, Double Precision, Even Spacing
+        write(io, Float64.(dataset.data))
+    elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 0) # Case 6 - Real, Double Precision, Uneven Spacing
+        # Both abscissa and ordinate are Float64
+        tmp = Float64.(reshape(reduce(vcat, [dataset.abscissa', dataset.data']), :, 1))
+        write(io, tmp)
+    elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 1)  # Case 7 - Complex, Double Precision, Even Spacing
+        tmp = Float64.(reshape(reduce(vcat, [real(dataset.data)', imag(dataset.data)']), :, 1))
+        write(io, tmp)
+     elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 0)  # Case 8 - Complex, Double Precision, Uneven Spacing
+        # Both abscissa and ordinate are Float64
+        tmp = Float64.(reshape(reduce(vcat, [dataset.abscissa', real(dataset.data)', imag(dataset.data)']), :, 1))
+        write(io, tmp)
     end
 
-    # End marker
-    push!(lines, "    -1")
-
-    return lines
+    return nothing
 end

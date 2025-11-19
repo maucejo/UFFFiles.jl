@@ -61,10 +61,14 @@ Universal Dataset Number: 82
                     6) Repeat Datasets for each Trace_Line
 """
 function parse_dataset82(io)
-    line_number, num_nodes, color = parse.(Int, split(readline(io)))
+    # Record 1
+    r1 = readline(io)
+    n, line_number, num_nodes, color = @scanf(r1, "%10i%10i%10i", Int, Int, Int)
+
+    # Record 2
     id_line = strip(readline(io))
 
-    lblock = block[4:end]
+    # Record 3
     line_nodes = Int[]
     while (line = readline(io)) != "    -1"
         append!(line_nodes, parse.(Int, split(line)))
@@ -90,12 +94,12 @@ Write a UFF Dataset 82 (Tracelines) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset82)
+function write_dataset(io, dataset::Dataset82)
     lines = String[]
 
     # Write header
-    push!(lines, "    -1")
-    push!(lines, "    82")
+    println(io, "    -1")
+    println(io, "    82")
 
     # Write Record 1: FORMAT(3I10)
     # Field 1: trace line number
@@ -106,12 +110,12 @@ function write_dataset(dataset::Dataset82)
         dataset.num_nodes,
         dataset.color
     )
-    push!(lines, line1)
+    println(io, line1)
 
     # Write Record 2: FORMAT(80A1)
     # Identification line (max 80 characters)
     id_line = rpad(dataset.id_line[1:min(length(dataset.id_line), 80)], 0)
-    push!(lines, id_line)
+    println(io, id_line)
 
     # Write Record 3: FORMAT(8I10)
     # Node numbers, 8 per line
@@ -122,11 +126,11 @@ function write_dataset(dataset::Dataset82)
 
         # Format each node as I10 (10 characters, right-aligned)
         line_parts = [@sprintf("%10d", node) for node in nodes_chunk]
-        push!(lines, join(line_parts, ""))
+        println(io, join(line_parts, ""))
     end
 
     # Write footer
-    push!(lines, "    -1")
+    println(io, "    -1")
 
-    return lines
+    return nothing
 end

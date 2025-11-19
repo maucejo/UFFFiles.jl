@@ -100,12 +100,10 @@ Write a UFF Dataset 164 (Units) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset164)
-    lines = String[]
-
+function write_dataset(io, dataset::Dataset164)
     # Write header
-    push!(lines, "    -1")
-    push!(lines, "   164")
+    println(io, "    -1")
+    println(io, "   164")
 
     # Write Record 1: FORMAT(I10,20A1,I10)
     # Field 1: units code (I10)
@@ -120,7 +118,7 @@ function write_dataset(dataset::Dataset164)
         desc,
         dataset.temperature_mode
     )
-    push!(lines, line1)
+    println(io, line1)
 
     # Write Record 2: FORMAT(3D25.17)
     # First line: 3 conversion factors (length, force, temperature)
@@ -129,16 +127,16 @@ function write_dataset(dataset::Dataset164)
         dataset.conversion_force,
         dataset.conversion_temperature
     )
-    push!(lines, line2)
+    println(io, line2)
 
     # Second line: temperature offset
     line3 = @sprintf("%25.17E",
         dataset.conversion_temperature_offset
     )
-    push!(lines, line3)
+    println(io, line3)
 
     # Write footer
-    push!(lines, "    -1")
+    println(io, "    -1")
 
-    return lines
+    return nothing
 end

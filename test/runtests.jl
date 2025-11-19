@@ -13,6 +13,7 @@ writepath = "written_datasets"
 #@testset "dataset15" begin
 
 filenames = readdir("datasets")
+filenames = [filenames[1:8]; filenames[14:end]] # exclude the 2000 series filesets for now
 # dataset = nothing
 for (i, filename) in enumerate(filenames)
     println(i, " ", filename)

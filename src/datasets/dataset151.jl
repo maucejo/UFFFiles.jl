@@ -128,21 +128,19 @@ Write a UFF Dataset 151 (Header) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset151)
-    lines = String[]
-
+function write_dataset(io, dataset::Dataset151)
     # Write header
-    push!(lines, "    -1")
-    push!(lines, "   151")
+    println(io, "    -1")
+    println(io, "   151")
 
     # Record 1: FORMAT(80A1) - model file name
-    push!(lines, extend_line(dataset.model_name))
+    println(io, extend_line(dataset.model_name))
 
     # Record 2: FORMAT(80A1) - model file description (empty line if no description)
-    push!(lines, extend_line(dataset.description))
+    println(io, extend_line(dataset.description))
 
     # Record 3: FORMAT(80A1) - program which created DB
-    push!(lines, extend_line(dataset.application))
+    println(io, extend_line(dataset.application))
 
     # Record 4: FORMAT(10A1,10A1,3I10) - date/time created, version, version, file_type
     # The datetime_created field should already contain both date and time
@@ -169,7 +167,7 @@ function write_dataset(dataset::Dataset151)
                     " "
                     )
 
-    push!(lines, record4)
+    println(io, record4)
 
     # Record 5: FORMAT(10A1,10A1) - date/time last saved
     record5 = @sprintf("%-10s%-10s%60s", 
@@ -178,10 +176,10 @@ function write_dataset(dataset::Dataset151)
                     " "
                     )
 
-    push!(lines, record5)
+    println(io, record5)
 
     # Record 6: FORMAT(80A1) - program which created universal file
-    push!(lines, extend_line(dataset.program))
+    println(io, extend_line(dataset.program))
 
     # Record 7: FORMAT(10A1,10A1) - date/time written
     record7 = @sprintf("%-10s%-10s%60s", 
@@ -190,10 +188,10 @@ function write_dataset(dataset::Dataset151)
                     " "
                     )
 
-    push!(lines, record7)
+    println(io, record7)
 
     # Write footer
-    push!(lines, "    -1")
+    println(io, "    -1")
 
-    return lines
+    return nothing
 end

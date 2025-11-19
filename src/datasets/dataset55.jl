@@ -508,21 +508,19 @@ Write a UFF Dataset 55 (Data at Nodes) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset55)
-    lines = String[]
-
+function write_dataset(io, dataset::Dataset55)
     # Write header
-    push!(lines, "    -1")
-    push!(lines, "    55")
+    println(io, "    -1")
+    println(io, "    55")
 
     # Write Records 1-5: ID lines (format 40A2 or 80A1)
-    push!(lines, dataset.id1)
-    push!(lines, dataset.id2)
-    push!(lines, dataset.id3)
-    push!(lines, dataset.id4)
+    println(io, dataset.id1)
+    println(io, dataset.id2)
+    println(io, dataset.id3)
+    println(io, dataset.id4)
 
     # Properly indent the line
-    push!(lines, " "^9 * dataset.id5)
+    println(io, " "^9 * dataset.id5)
 
     # Write Record 6: format 6I10
     line6 = @sprintf("%10d%10d%10d%10d%10d%10d",
@@ -533,13 +531,13 @@ function write_dataset(dataset::Dataset55)
         dataset.dtype,
         dataset.ndv_per_node
     )
-    push!(lines, line6)
+    println(io, line6)
 
     # Write Record 7: format 8I10
     # Get r7_raw from the r7 NamedTuple
     r7_values = collect(values(dataset.r7))
     line7_parts = [@sprintf("%10d", val) for val in r7_values]
-    push!(lines, join(line7_parts, ""))
+    println(io, join(line7_parts, ""))
 
     # Write Record 8: format 6E13.5
     # Get r8_raw from the r8 NamedTuple
@@ -548,7 +546,7 @@ function write_dataset(dataset::Dataset55)
     # Write up to 6 values per line
     for i in 1:6:length(line8_parts)
         end_idx = min(i + 5, length(line8_parts))
-        push!(lines, join(line8_parts[i:end_idx], ""))
+        println(io, join(line8_parts[i:end_idx], ""))
     end
 
     # Write Records 9 and 10 for each node
@@ -557,7 +555,7 @@ function write_dataset(dataset::Dataset55)
     for i in 1:nnodes
         # Record 9: format I10 - node number
         line9 = @sprintf("%10d", dataset.node_number[i])
-        push!(lines, line9)
+        println(io, line9)
 
         # Record 10: format 6E13.5 - data values
         # Get data for this node
@@ -585,12 +583,12 @@ function write_dataset(dataset::Dataset55)
         for j in 1:6:length(data_values)
             end_idx = min(j + 5, length(data_values))
             line_parts = [@sprintf("%13.5e", val) for val in data_values[j:end_idx]]
-            push!(lines, join(line_parts, ""))
+            println(io, join(line_parts, ""))
         end
     end
 
     # Write footer
-    push!(lines, "    -1")
+    println(io, "    -1")
 
-    return lines
+    return nothing
 end

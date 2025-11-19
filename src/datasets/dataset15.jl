@@ -86,12 +86,12 @@ Write a UFF Dataset 15 (Nodes) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset15)
+function write_dataset(io, dataset::Dataset15)
     lines = String[]
 
     # Write header
-    push!(lines, "    -1")
-    push!(lines, "    15")
+    println(io, "    -1")
+    println(io, "    15")
 
     # Write node data
     for i in eachindex(dataset.node_ID)
@@ -105,11 +105,11 @@ function write_dataset(dataset::Dataset15)
             dataset.coords[i][2],
             dataset.coords[i][3]
         )
-        push!(lines, line)
+        println(io, line)
     end
 
     # Write footer
-    push!(lines, "    -1")
+    println(io, "    -1")
 
-    return lines
+    return nothing
 end

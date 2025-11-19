@@ -130,20 +130,17 @@ Write a UFF Dataset 18 (Coordinate Systems) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset18)
-    lines = String[]
-
+function write_dataset(io, dataset::Dataset18)
     # Header
-    push!(lines, "    -1")
-    push!(lines, "    18")
+    println(io, "    -1")
+    println(io, "    18")
 
     # Ensure we can iterate consistently over coordinate systems
     ncs = length(dataset.cs_num)
 
     for i in 1:ncs
         # Record 1: FORMAT(5I10) - 5 integers with width 10
-        push!(
-            lines,
+        println(io,
             @sprintf("%10d%10d%10d%10d%10d",
                 dataset.cs_num[i],
                 dataset.cs_type[i],
@@ -154,12 +151,11 @@ function write_dataset(dataset::Dataset18)
         )
 
         # Record 2: FORMAT(20A2) - coordinate system name (40 characters)
-        push!(lines, dataset.cs_name[i])
+        println(io, dataset.cs_name[i])
 
         # Record 3: FORMAT(1P6E13.5) - 9 coordinate system definition parameters
         # Split into 2 lines: first line has 6 values, second line has 3 values
-        push!(
-            lines,
+        println(io,
             @sprintf("%13.5E%13.5E%13.5E%13.5E%13.5E%13.5E",
                 dataset.cs_origin[i][1],
                 dataset.cs_origin[i][2],
@@ -169,8 +165,7 @@ function write_dataset(dataset::Dataset18)
                 dataset.cs_x[i][3]
             ),
         )
-        push!(
-            lines,
+        println(io,
             @sprintf("%13.5E%13.5E%13.5E",
                 dataset.cs_xz[i][1],
                 dataset.cs_xz[i][2],
@@ -180,7 +175,7 @@ function write_dataset(dataset::Dataset18)
     end
 
     # Footer
-    push!(lines, "    -1")
+    println(io, "    -1")
 
-    return lines
+    return nothing
 end

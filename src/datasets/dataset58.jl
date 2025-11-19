@@ -970,144 +970,42 @@ function parse_dataset58(io)
     )
 end
 
-"""
-    write_dataset(dataset::Dataset58) -> Vector{String}
-
-Write a UFF Dataset 58 (Function Data) to a vector of strings.
-
-**Input**
-- `dataset::Dataset58`: The Dataset58 instance to write.
-
-**Output**
-- `Vector{String}`: A vector of strings representing the lines of the dataset.
-"""
-function write_dataset(dataset::Dataset58)
-    lines = String[]
-
-    # Start marker
-    push!(lines, "    -1")
-
-    # Dataset number
-    push!(lines, "    58")
-
-    # Records 1-5: ID Lines (80A1 format)
-    push!(lines, dataset.id1)
-    push!(lines, dataset.id2)
-    push!(lines, dataset.id3)
-    push!(lines, dataset.id4)
-    push!(lines, dataset.id5)
-
-    # Record 6: DOF Identification
-    # Format: 2(I5,I10),2(1X,10A1,I10,I4)
-    r6_line = @sprintf("%5d%10d%5d%10d %-10s%10d%4d %-10s%10d%4d",
-        dataset.func_type,
-        dataset.func_id,
-        dataset.ver_num,
-        dataset.load_case,
-        dataset.resp_name,
-        dataset.resp_node,
-        dataset.resp_dir,
-        dataset.ref_name,
-        dataset.ref_node,
-        dataset.ref_dir)
-    push!(lines, r6_line)
-
-    # Record 7: Data Form
-    # Format: 3I10,3E13.5
-    r7_line = @sprintf("%10d%10d%10d%13.5E%13.5E%13.5E",
-        dataset.ord_dtype,
-        dataset.num_pts,
-        dataset.abs_spacing_type,
-        dataset.abs_min,
-        dataset.abs_increment,
-        dataset.zval)
-    push!(lines, r7_line)
-
-    # Record 8: Abscissa Data Characteristics
-    # Format: I10,3I5,2(1X,20A1)
-    r8_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
-        dataset.abs_spec_dtype,
-        dataset.abs_len_unit_exp,
-        dataset.abs_force_unit_exp,
-        dataset.abs_temp_unit_exp,
-        dataset.abs_axis_label,
-        dataset.abs_axis_unit_label)
-    push!(lines, r8_line)
-
-    # Record 9: Ordinate Data Characteristics
-    # Format: I10,3I5,2(1X,20A1)
-    r9_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
-        dataset.ord_spec_dtype,
-        dataset.ord_len_unit_exp,
-        dataset.ord_force_unit_exp,
-        dataset.ord_temp_unit_exp,
-        dataset.ord_axis_label,
-        dataset.ord_axis_unit_label)
-    push!(lines, r9_line)
-
-    # Record 10: Ordinate Denominator Data Characteristics
-    # Format: I10,3I5,2(1X,20A1)
-    r10_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
-        dataset.ord_denom_spec_dtype,
-        dataset.ord_denom_len_unit_exp,
-        dataset.ord_denom_force_unit_exp,
-        dataset.ord_denom_temp_unit_exp,
-        dataset.ord_denom_axis_label,
-        dataset.ord_denom_axis_unit_label)
-    push!(lines, r10_line)
-
-    # Record 11: Z-axis Data Characteristics
-    # Format: I10,3I5,2(1X,20A1)
-    r11_line = @sprintf("%10d%5d%5d%5d %-20s %-20s",
-        dataset.z_spec_dtype,
-        dataset.z_len_unit_exp,
-        dataset.z_force_unit_exp,
-        dataset.z_temp_unit_exp,
-        dataset.z_axis_label,
-        dataset.z_axis_unit_label)
-    push!(lines, r11_line)
-
+function write_dataset58_data(io, dataset::Dataset58)
     # Record 12: Data Values
     # Format depends on ordinate data type and precision
-    if dataset.ord_dtype == 2 || dataset.ord_dtype == 4
-        # Real data (single or double precision)
-        if dataset.ord_dtype == 2
-            # Real single precision: 6E13.5
-            values_per_line = 6
-            fmt = "E13.5"
-        else
-            # Real double precision: 4E20.12
-            values_per_line = 4
-            fmt = "E20.12"
-        end
 
-        # Write data in chunks
-        for i in 1:values_per_line:length(dataset.data)
-            end_idx = min(i + values_per_line - 1, length(dataset.data))
-            chunk = dataset.data[i:end_idx]
-
-            if dataset.ord_dtype == 2
-                line = join([@sprintf(" %12.5E", v) for v in chunk], "")
-            else
-                line = join([@sprintf(" %19.12E", v) for v in chunk], "")
-            end
-            push!(lines, line)
-        end
+    if (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 1) # Case 1 - Real, Single Precision, Even Spacing
+      # FORMAT(6E13.5) 6 values per line
+      y_values_per_line = 6
+      abscissa = Float32[]  
+        for i in 1:y_values_per_line:length(dataset.data)
+        ie = min(i + y_values_per_line - 1, length(dataset.data))
+        line = join([@sprintf(" %12.5E", v) for v in dataset.data[i:ie]])
+        println(io, line)
+      end
+    elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 0) # Case 2 - Real, Single Precision, Uneven Spacing
+      # Real single precision uneven: 6E13.5 (3 pair per line)
+      xy_pair_per_line = 3
+      for i in 1:xy_pair_per_line:length(dataset.data)
+            ie = min(i + xy_pair_per_line - 1, length(dataset.data))
+            line = join([@sprintf(" %12.5E %12.5E %12.5E", a, real(o), imag(o)) for (a, o) in zip(dataset.abscissa[i:ie], dataset.data[i:ie])])
+            println(io, line)
+      end
     elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 1)  # Case 3 - Complex, Single Precision, Even Spacing
       # Complex single precision even: 6E13.5 (3 complex values per line)
       y_pair_per_line = 3
       for i in 1:y_pair_per_line:length(dataset.data)
-            ie = min(i + y_pair_per_line - 1, length(dataset.abscissa))
+            ie = min(i + y_pair_per_line - 1, length(dataset.data))
             line = join([@sprintf(" %12.5E %12.5E", real(v), imag(v)) for v in dataset.data[i:ie]])
-            push!(lines, line)
+            println(io, line)
       end
     elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 0)  # Case 4 - Complex, Single Precision, Uneven Spacing
       # Complex single precision uneven: 6E13.5 (3 complex values per line)
       xy_pair_per_line = 2
       for i in 1:xy_pair_per_line:length(dataset.data)
-            ie = min(i + xy_pair_per_line - 1, length(dataset.abscissa))
+            ie = min(i + xy_pair_per_line - 1, length(dataset.data))
             line = join([@sprintf(" %12.5E %12.5E %12.5E", a, real(o), imag(o)) for (a, o) in zip(dataset.abscissa[i:ie], dataset.data[i:ie])])
-            push!(lines, line)
+            println(io, line)
       end
     elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 1) # Case 5 - Real, Double Precision, Even Spacing
       # Real double precision even: 4E20.12
@@ -1116,40 +1014,33 @@ function write_dataset(dataset::Dataset58)
             ie = min(i + y_values_per_line - 1, length(dataset.data))
             chunk = dataset.data[i:ie]
             line = join([@sprintf(" %19.12E", v) for v in chunk], "")
-            push!(lines, line)
+            println(io, line)
       end
     elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 0) # Case 6 - Real, Double Precision, Uneven Spacing
       # Real double precision uneven: 2(E13.5,E20.12)
       xy_pair_per_line = 2
       for i in 1:xy_pair_per_line:length(dataset.data)
-            ie = min(i + xy_pair_per_line - 1, length(dataset.abscissa))
+            ie = min(i + xy_pair_per_line - 1, length(dataset.data))
             line = join([@sprintf(" %12.5E %19.12E", a, o) for (a, o) in zip(dataset.abscissa[i:ie], dataset.data[i:ie])])
-            push!(lines, line)
+            println(io, line)
       end
     elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 1)  # Case 7 - Complex, Double Precision, Even Spacing
       # Complex double precision even: 4E20.12 (2 complex values per line)
       y_pair_per_line = 3
       for i in 1:y_pair_per_line:length(dataset.data)
-            ie = min(i + y_pair_per_line - 1, length(dataset.abscissa))
+            ie = min(i + y_pair_per_line - 1, length(dataset.data))
             line = join([@sprintf(" %19.12E %19.12E", real(v), imag(v)) for v in dataset.data[i:ie]])
-            push!(lines, line)
+            println(io, line)
       end
      elseif (dataset.ord_dtype == 5 && dataset.abs_spacing_type == 0)  # Case 8 - Complex, Double Precision, Uneven Spacing
       # Complex double precision uneven: E13.5,2E20.12 (1 complex values per line)
       xy_pair_per_line = 1
       for i in 1:xy_pair_per_line:length(dataset.data)
-            ie = min(i + xy_pair_per_line - 1, length(dataset.abscissa))
+            ie = min(i + xy_pair_per_line - 1, length(dataset.data))
             line = join([@sprintf(" %12.5E %19.12E %19.12E", a, real(o), imag(o)) for (a, o) in zip(dataset.abscissa[i:ie], dataset.data[i:ie])])
-            push!(lines, line)
+            println(io, line)
         end
     end
 
-    # End marker
-    push!(lines, "    -1")
-
-    return lines
-end
-
-function parse_dataset58b(block)
-    error("Binary parsing for Dataset 58 is not yet implemented.")
+    return nothing
 end

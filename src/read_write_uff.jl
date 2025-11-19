@@ -1,3 +1,5 @@
+global binary_write::Bool
+
 """
     readuff(filename::String) -> Vector{UFFDataset}
 
@@ -54,19 +56,21 @@ Writes a vector of UFFDataset objects to a UFF file.
 
 **Input**
 - `filename::String`: The path to the UFF file to be written.
-- `data::Vector{UFFDataset}`: A vector containing the UFF datasets to be
+- `datasets::Vector{UFFDataset}`: A vector containing the UFF datasets to be
 written.
 """
-function writeuff(filename::String, data)
+function writeuff(filename::String, datasets; binary=true)
+    global binary_write = binary
     open(filename, "w") do io
-        for dataset in data
+        for dataset in datasets
             @show(dataset, typeof(dataset))
-            lines = write_dataset(dataset)
+            #lines = 
+            write_dataset(io, dataset)
 
-            # Write the formatted lines to the file
+            #= Write the formatted lines to the file
             for line in lines
                 println(io, line)
-            end
+            end=#
         end
     end
 end

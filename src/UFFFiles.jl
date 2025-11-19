@@ -2,6 +2,7 @@ module UFFFiles
     using Dates
     using FileIO
     using Printf
+    using Scanf
 
     # Base UFFDataset abstract type
     abstract type UFFDataset end
