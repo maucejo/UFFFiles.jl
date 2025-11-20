@@ -184,13 +184,13 @@ Write a UFF Dataset 58 (Function Data) to a vector of strings.
 - `Vector{String}`: A vector of strings representing the lines of the dataset.
 """
 function write_dataset(io, dataset::Dataset58)
-    # the abcissa for uneven double precision ASCII datasets are Float32.  
+    # the abcissa for uneven double precision ASCII datasets are Float32. 
     # the abscissa for uneven double precision binary datasets are Float64
     # Start marker
     println(io, "    -1")
 
     n = length(dataset.data)
-    binary_bytes = 
+    binary_bytes =
     if (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 1)      # Case 1 - Real, Single Precision, Even Spacing
         n*4
     elseif (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 0)  # Case 2 - Real, Single Precision, Uneven Spacing

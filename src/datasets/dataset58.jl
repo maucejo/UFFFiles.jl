@@ -768,12 +768,10 @@ function parse_dataset58(io)
       fw = 13   # field width
       for i in 1:n:2num_pts
         r12 = readline(io)
-        #@show(i, r12)
         for j in 1:n
           i + j - 1 > num_pts && break  # break if num_pts exceeded
           _data[i+j-1] = parse(Float32, r12[(j-1)*fw+1:j*fw])
         end
-        #@show(typeof(data), size(data))
       end
       tmp = reshape(reinterpret(Float32, _data), (2, :))'
       abscissa = tmp[:, 1]
@@ -785,14 +783,12 @@ function parse_dataset58(io)
       fw = 13   # field width
       for i in 1:n:2num_pts
         r12 = readline(io)
-      # @show(i , r12)
         for j in 1:n
           i + j - 1 > num_pts && break  # break if num_pts exceeded
           _data[i+j-1] = parse(Float32, r12[(j-1)*fw+1:j*fw])
         end
-      # @show(typeof(data), size(data))
       end
-      abscissa = Float32[]  
+      abscissa = Float32[]
       data = reinterpret(ComplexF32, _data)
 
     elseif (ord_dtype == 5 && abs_spacing_type == 0)  # Case 4 - Complex, Single Precision, Uneven Spacing 6E13.5
@@ -801,12 +797,10 @@ function parse_dataset58(io)
       fw = 13   # field width
       for i in 1:n:3num_pts
         r12 = readline(io)
-      # @show(i , r12)
         for j in 1:n
           i + j - 1 > num_pts && break  # break if num_pts exceeded
           _data[i+j-1] = parse(Float32, r12[(j-1)*fw+1:j*fw])
         end
-      # @show(typeof(data), size(data))
       end
       tmp = reshape(reinterpret(Float32, _data), (3, :))'
       abscissa = tmp[:, 1]
@@ -818,23 +812,20 @@ function parse_dataset58(io)
       fw = 20   # field width
       for i in 1:n:num_pts
         r12 = readline(io)
-      # @show(i , r12)
         for j in 1:n
           i + j - 1 > num_pts && break  # break if num_pts exceeded
           _data[i+j-1] = parse(Float64, r12[(j-1)*fw+1:j*fw])
         end
-      # @show(typeof(data), size(data))
       end
-      abscissa = Float64[]  
+      abscissa = Float64[]
       data = reinterpret(Float64, _data)
 
     elseif (ord_dtype == 2 && abs_spacing_type == 0) # Case 6 - Real, Double Precision, Uneven Spacing 2(E13.5,E20.12)
       _data = Vector{Float64}(undef, 2num_pts)
-      n = 4           # number of data values or (x,y) or (x, Ry, Iy) sets per line
+      n = 4    # number of data values or (x,y) or (x, Ry, Iy) sets per line
       fw = [13, 20]   # field width
       for i in 1:n:2num_pts
         r12 = readline(io)
-      # @show(i , r12)
         _data[i] = parse(Float64, r12[1:13])
         _data[i+1] = parse(Float64, r12[14:33])
         i + 2 > num_pts && break  # break if num_pts exceeded
@@ -859,14 +850,14 @@ function parse_dataset58(io)
         end
       # @show(typeof(data), size(data))
         end
-      abscissa = Float64[]  
+      abscissa = Float64[]
       data = reinterpret(Float64, _data)
-      abscissa = Float64[] 
+      abscissa = Float64[]
       data = reinterpret(ComplexF64, _data)
 
     elseif (ord_dtype == 5 && abs_spacing_type == 0)  # Case 8 - Complex, Double Precision, Uneven Spacing E13.5,2E20.12
       _data = Vector{Float64}(undef, 2num_pts)
-      n = 4           # number of data values or (x,y) or (x, Ry, Iy) sets per line
+      n = 4    # number of data values or (x,y) or (x, Ry, Iy) sets per line
       fw = [13, 20]   # field width
       for i in 1:n:2num_pts
         r12 = readline(io)
@@ -952,7 +943,7 @@ function write_dataset58_data(io, dataset::Dataset58)
     if (dataset.ord_dtype == 2 && dataset.abs_spacing_type == 1) # Case 1 - Real, Single Precision, Even Spacing
       # FORMAT(6E13.5) 6 values per line
       y_values_per_line = 6
-      abscissa = Float32[]  
+      abscissa = Float32[]
         for i in 1:y_values_per_line:length(dataset.data)
         ie = min(i + y_values_per_line - 1, length(dataset.data))
         line = join([@sprintf(" %12.5E", v) for v in dataset.data[i:ie]])

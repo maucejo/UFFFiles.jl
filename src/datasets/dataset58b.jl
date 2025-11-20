@@ -24,13 +24,13 @@ bbbb58
 ...
 bbbb-1
 
-The Binary 58 universal file format was originally developed by UC-SDRL 
+The Binary 58 universal file format was originally developed by UC-SDRL
 in order to eliminate the need to compress the UFF 58 records and to reduce
 the time required to load the UFF 58 data records.  The Binary 58 universal file
 format yields files that are comparable to compressed files (approximately 3 to
-4 times smaller than the equivalent UFF 58 file).  The Binary 58 universal file 
-format loads approximately 30 to 40 times faster than the equivalent UFF 58 
-file, depending upon the computing environment.  This new format was 
+4 times smaller than the equivalent UFF 58 file).  The Binary 58 universal file
+format loads approximately 30 to 40 times faster than the equivalent UFF 58
+file, depending upon the computing environment.  This new format was
 submitted to SDRC and subsequently adopted as a supported format.
 
 The Binary 58 universal file format uses the same ASCII records at the
@@ -98,15 +98,15 @@ function parse_dataset58b(io)
    # this function should be able to read the abscissa for uneven datasets if they are Float32 or Float64.
     reset(io)
     func = readline(io)
-    n, _, type, endian, floating_point_format, num_ascii_lines, binary_bytes, _... = @scanf(func, "%6i%c%6i%6i%12i%12i%6i%6i%12i%12i", 
+    n, _, type, endian, floating_point_format, num_ascii_lines, binary_bytes, _... = @scanf(func, "%6i%c%6i%6i%12i%12i%6i%6i%12i%12i",
         Int, Char, Int, Int, Int, Int, Int, Int, Int, Int)
-    
+
     # Need to implement proper error handling
     type == 'b' || error("Expected UFF58 binary file but type is $type")
     endian == 1 || println("Only implemented for Little Endian")
     floating_point_format == 2 || println("Only implemented for IEEE 754")
     num_ascii_lines == 11 || println("Header not correct")
-   
+
     id1 = strip(readline(io))
     id2 = strip(readline(io))
     id3 = strip(readline(io))
@@ -115,9 +115,9 @@ function parse_dataset58b(io)
 
     # Record 6
     r6 = readline(io)
-    n, func_type, func_id, version_num, load_case_id, _, 
-        response_entity, response_node, response_direction, _, 
-        reference_entity, reference_node,  reference_direction= 
+    n, func_type, func_id, version_num, load_case_id, _,
+        response_entity, response_node, response_direction, _,
+        reference_entity, reference_node,  reference_direction=
         @scanf(r6, "%5i%10i%5i%10i%c%10c%10i%4i%c%10c%10i%4i", Int, Int, Int, Int, Char, String, Int, Int, Char, String, Int, Int)
 
     # Record 7
@@ -126,44 +126,44 @@ function parse_dataset58b(io)
 
     # Record 8
     r8 = (readline(io))
-    n, abs_spec_dtype, abs_len_unit_exp, abs_force_unit_exp, abs_temp_unit_exp, _, abs_axis_label, _, abs_axis_unit_label = 
+    n, abs_spec_dtype, abs_len_unit_exp, abs_force_unit_exp, abs_temp_unit_exp, _, abs_axis_label, _, abs_axis_unit_label =
         @scanf(r8, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
 
     # Record 9
     r9 = (readline(io))
-    n, ord_spec_dtype, ord_len_unit_exp, ord_force_unit_exp, ord_temp_unit_exp, _, ord_axis_label, _, ord_axis_unit_label = 
+    n, ord_spec_dtype, ord_len_unit_exp, ord_force_unit_exp, ord_temp_unit_exp, _, ord_axis_label, _, ord_axis_unit_label =
         @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
 
     # Record 10
     r10 = (readline(io))
-    n, ord_denom_spec_dtype, ord_denom_len_unit_exp, ord_denom_force_unit_exp, ord_denom_temp_unit_exp, _, ord_denom_axis_label, _, ord_denom_axis_unit_label = 
-        @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
+    n, ord_denom_spec_dtype, ord_denom_len_unit_exp, ord_denom_force_unit_exp, ord_denom_temp_unit_exp, _, ord_denom_axis_label, _, ord_denom_axis_unit_label =
+        @scanf(r10, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
 
     # Record 11
     r11 = (readline(io))
-    n, z_spec_dtype, z_len_unit_exp, z_force_unit_exp, z_temp_unit_exp, _, z_axis_label, _, z_axis_unit_label = 
-        @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
+    n, z_spec_dtype, z_len_unit_exp, z_force_unit_exp, z_temp_unit_exp, _, z_axis_label, _, z_axis_unit_label =
+        @scanf(r11, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
 
     # Record 12
     _data = read(io, binary_bytes)
-    
+
     # Convert UInt8 to Values
     if (ord_dtype == 2 && abs_spacing_type == 1) # Case 1 - Real, Single Precision, Even Spacing
-      abscissa = Float32[]  
+      abscissa = Float32[]
       data = reinterpret(Float32, _data)
     elseif (ord_dtype == 2 && abs_spacing_type == 0) # Case 2 - Real, Single Precision, Uneven Spacing
       tmp = reshape(reinterpret(Float32, _data), (2, :))'
       abscissa = tmp[:, 1]
       data = tmp[:, 2]
     elseif (ord_dtype == 5 && abs_spacing_type == 1)  # Case 3 - Complex, Single Precision, Even Spacing
-      abscissa = Float32[]  
+      abscissa = Float32[]
       data = reinterpret(ComplexF32, _data)
     elseif (ord_dtype == 5 && abs_spacing_type == 0)  # Case 4 - Complex, Single Precision, Uneven Spacing
       tmp = reshape(reinterpret(Float32, _data), (3, :))'
       abscissa = tmp[:, 1]
       data = reinterpret(ComplexF32, reshape(tmp[:, 2:3]', (:, 1)))
     elseif (ord_dtype == 2 && abs_spacing_type == 1) # Case 5 - Real, Double Precision, Even Spacing
-      abscissa = Float64[]  
+      abscissa = Float64[]
       data = reinterpret(Float64, _data)
     elseif (ord_dtype == 2 && abs_spacing_type == 0) # Case 6 - Real, Double Precision, Uneven Spacing
       2*8*num_pts == binary_bytes || println("Data Integrity Problem")
@@ -171,7 +171,7 @@ function parse_dataset58b(io)
       abscissa = tmp[:, 1]
       data = tmp[:, 2]
     elseif (ord_dtype == 5 && abs_spacing_type == 1)  # Case 7 - Complex, Double Precision, Even Spacing
-      abscissa = Float64[] 
+      abscissa = Float64[]
       data = reinterpret(ComplexF64, _data)
     elseif (ord_dtype == 5 && abs_spacing_type == 0)  # Case 8 - Complex, Double Precision, Uneven Spacing
       # There is some ambiguity as to whether the abscissa is Float32 or Float64.  This handles both
@@ -182,11 +182,11 @@ function parse_dataset58b(io)
       elseif (4+16)*num_pts == binary_bytes
         abscissa = reinterpret(Float32, Float_data[1:20:binary_bytes])
         data = reinterpret(Float64, _data[5:20:binary_bytes])
-      else 
+      else
         println("Data Integrity Problem")
       end
     end
-    
+
     readline(io) # remove trailing "    -1" from dataset
 
     return Dataset58(
