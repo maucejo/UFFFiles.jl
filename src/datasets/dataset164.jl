@@ -69,14 +69,17 @@ Universal Dataset Number: 164
                 Field 4      -- temperature offset
 """
 function parse_dataset164(io)
-    record1 = extend_line(readline(io))   
-    units = parse(Int, record1[1:10])
-    description = strip(record1[11:30])
-    temperature_mode = parse(Int, strip(record1[31:40]))
-    (conversion_length, conversion_force, conversion_temperature) = parse.(Float64, split(replace(readline(io), "D" => "E")))
-    conversion_temperature_offset = parse(Float64, strip(replace(readline(io), "D" => "E")))
+    # Record 1: FORMAT(I10,20A1,I10)
+    r1 = readline(io)
+    units, description, temperature_mode = @scanf(r1, "%10d%20s%10d", Int, String, Int)[2:end]
 
-    _ = readline(io)    # Read trailing "    -1"
+    # Record 2: FORMAT(3D25.17)
+    conversion_length, conversion_force, conversion_temperature = @scanf(readline(io), "%25e%25e%25e", Float64, Float64, Float64)[2:end]
+
+    conversion_temperature_offset = @scanf(readline(io), "%25e", Float64)[2]
+
+    # Read trailing "    -1"
+    readline(io)
 
     return Dataset164(
         units,
@@ -113,30 +116,28 @@ function write_dataset(io, dataset::Dataset164)
     # Pad or truncate description to exactly 20 characters
     desc = rpad(dataset.description[1:min(length(dataset.description), 20)], 20)
 
-    line1 = @sprintf("%10d%20s%10d",
+    r1 = @sprintf("%10d%20s%10d",
         dataset.units,
         desc,
         dataset.temperature_mode
     )
-    println(io, line1)
+    println(io, r1)
 
     # Write Record 2: FORMAT(3D25.17)
     # First line: 3 conversion factors (length, force, temperature)
-    line2 = @sprintf("%25.17E%25.17E%25.17E",
+    r2_1 = @sprintf("%25.17E%25.17E%25.17E",
         dataset.conversion_length,
         dataset.conversion_force,
         dataset.conversion_temperature
     )
-    println(io, line2)
+    println(io, r2_1)
 
     # Second line: temperature offset
-    line3 = @sprintf("%25.17E",
+    r2_2 = @sprintf("%25.17E",
         dataset.conversion_temperature_offset
     )
-    println(io, line3)
+    println(io, r2_2)
 
     # Write footer
     println(io, "    -1")
-
-    return nothing
 end

@@ -82,25 +82,28 @@ function parse_dataset18(io)
     cs_xz = Vector{Float64}[]
 
     while  (line = readline(io)) != "    -1"
-        # Parse record 1
-        csn, cst, ref_csn, col, md = parse.(Int, split(line))
+        # Record 1 - FORMAT(5I10)
+        csn, cst, ref_csn, col, md = @scanf(line, "%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int)[2:end]
+        # csn, cst, ref_csn, col, md = parse.(Int, split(line))
         push!(cs_num, csn)
         push!(cs_type, cst)
         push!(ref_cs_num, ref_csn)
         push!(color, col)
         push!(method_def, md)
 
-        # Parse record 2
+        # Record 2 - FORMAT(20A2)
         push!(cs_name, strip(readline(io)))
 
-        # Parse record 3
-        _cs_params = Float64[]
-        for _ in 1:2
-            append!(_cs_params, parse.(Float64, split(strip(readline(io)))))
-        end
-        push!(cs_origin, _cs_params[1:3])
-        push!(cs_x, _cs_params[4:6])
-        push!(cs_xz, _cs_params[7:9])
+        # Record 3 - FORMAT(1P6E13.5)
+        # Fields 1-6
+        cs_orig1, cs_orig2, cs_orig3, cs_x1, cs_x2, cs_x3 = @scanf(readline(io), "%13e%13e%13e%13e%13e%13e", Float64, Float64, Float64, Float64, Float64, Float64)[2:end]
+
+        # Fields 7-9
+        cs_xz1, cs_xz2, cs_xz3 = @scanf(readline(io), "%13e%13e%13e", Float64, Float64, Float64)[2:end]
+
+        push!(cs_origin, [cs_orig1, cs_orig2, cs_orig3])
+        push!(cs_x, [cs_x1, cs_x2, cs_x3])
+        push!(cs_xz, [cs_xz1, cs_xz2, cs_xz3])
 
         # Move to the next coordinate system
     end
@@ -140,7 +143,7 @@ function write_dataset(io, dataset::Dataset18)
     for i in 1:ncs
         # Record 1: FORMAT(5I10) - 5 integers with width 10
         println(io,
-            @sprintf("%10d%10d%10d%10d%10d",
+            @sprintf("%10i%10i%10i%10i%10i",
                 dataset.cs_num[i],
                 dataset.cs_type[i],
                 dataset.ref_cs_num[i],
@@ -155,7 +158,7 @@ function write_dataset(io, dataset::Dataset18)
         # Record 3: FORMAT(1P6E13.5) - 9 coordinate system definition parameters
         # Split into 2 lines: first line has 6 values, second line has 3 values
         println(io,
-            @sprintf("%13.5E%13.5E%13.5E%13.5E%13.5E%13.5E",
+            @sprintf("%13.5e%13.5e%13.5e%13.5e%13.5e%13.5e",
                 dataset.cs_origin[i][1],
                 dataset.cs_origin[i][2],
                 dataset.cs_origin[i][3],
@@ -165,7 +168,7 @@ function write_dataset(io, dataset::Dataset18)
             ),
         )
         println(io,
-            @sprintf("%13.5E%13.5E%13.5E",
+            @sprintf("%13.5e%13.5e%13.5e",
                 dataset.cs_xz[i][1],
                 dataset.cs_xz[i][2],
                 dataset.cs_xz[i][3]
@@ -175,6 +178,4 @@ function write_dataset(io, dataset::Dataset18)
 
     # Footer
     println(io, "    -1")
-
-    return nothing
 end

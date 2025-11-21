@@ -94,7 +94,7 @@ Universal Dataset Number: 1858
 
 Name:   Dataset 58 qualifiers
 ----------------------------------------------------------------------------
- 
+
 Record 1:     FORMAT(6I12)
               Field 1       - Set record number
               Field 2       - Octave format
@@ -113,13 +113,13 @@ Record 2:     FORMAT(12I6)
                               3 - C weighting
                               4 - D weighting (not yet implemented)
               Field 2       - Window Type
-                              0 - No window or unknown (default) 
+                              0 - No window or unknown (default)
                               1 - Hanning Narrow
                               2 - Hanning Broad
                               3 - Flattop
                               4 - Exponential
                               5 - Impact
-                              6 - Impact and Exponential 
+                              6 - Impact and Exponential
               Field 3       - Amplitude units
                               0 - unknown (default)
                               1 - Half-peak scale
@@ -157,14 +157,14 @@ Record 2:     FORMAT(12I6)
                               2 - RPM from Tach
                               3 - Frequency from tach
               Fields 10-12  - not used (fill with zeros)
-         
+
 Record 3:     FORMAT  (1P5E15.7)
               Field 1       - Z RPM value
               Field 2       - Z Time value
               Field 3       - Z Order value
               Field 4       - Number of samples
               Field 5       - not used (fill with zero)
-      
+
 Record 4:     FORMAT  (1P5E15.7)
               Field 1       - User value 1
               Field 2       - User value 2
@@ -178,7 +178,7 @@ Record 5:     FORMAT  (1P5E15.7)
 Record 6:     FORMAT  (2A2,2X,2A2)
               Field 1       - Response direction
               Field 2       - Reference direction
- 
+
 Record 7:     FORMAT  (40A2)
               Field 1       - not used
 
@@ -186,72 +186,42 @@ Record 7:     FORMAT  (40A2)
 
 """
 function parse_dataset1858(io)
-    # Record 1
-    record1 = (readline(io))
-    set_record_number = parse(Int, record1[1:12])
-    octave_format = parse(Int, record1[13:24])
-    meas_run = parse(Int, record1[25:36])
+    # Record 1 - FORMAT(6I12)
+    r1 = readline(io)
+    set_record_number, octave_format, meas_run = @scanf(r1, "%12i%12i%12i", Int, Int, Int)[2:end]
 
+    # Record 2 - FORMAT(12I6)
+    r2 = readline(io)
+    octave_weighting, window, amp_scaling, normalization, abs_data_type_qual,
+    ord_num_data_type_qual, ord_denom_data_type_qual, z_axis_data_type_qual,
+    sampling_type = @scanf(r2, "%6i%6i%6i%6i%6i%6i%6i%6i%6i",
+    Int, Int, Int, Int, Int, Int, Int, Int, Int)[2:end]
 
-    n, set_record_number, octave_format, meas_run, unused... = @scanf(record1, "%12i%12i%12i%12i%12i%12i", Int, Int, Int, Int, Int, Int)
-    
-    # Record 2
-    record2 = (readline(io))
-    octave_weighting = parse(Int, record2[1:6])
-    window = parse(Int, record2[7:12])
-    amp_scaling = parse(Int, record2[13:18])
-    normalization = parse(Int, record2[19:24])
-    abs_data_type_qual = parse(Int, record2[25:30])
-    ord_num_data_type_qual = parse(Int, record2[31:36])
-    ord_denom_data_type_qual = parse(Int, record2[37:42])
-    z_axis_data_type_qual = parse(Int, record2[43:48])
-    sampling_type = parse(Int, record2[49:54])
+    # Record 3 - FORMAT (1P5E15.7)
+    r3 = readline(io)
+    z_rpm_value, z_time_value, z_order_value, num_samples = @scanf(r3, "%15e%15e%15e%15e", Float64, Float64, Float64, Int)[2:end]
 
+    # Record 4 - FORMAT (1P5E15.7)
+    r4 = readline(io)
+    uv1, uv2, uv3, uv4, exp_window_damping = @scanf(r4, "%15e%15e%15e%15e%15e", Float64, Float64, Float64, Float64, Float64)[2:end]
 
-    n, octave_weighting, window, amp_scaling, normalization, abs_data_type_qual, 
-        ord_num_data_type_qual, ord_denom_data_type_qual, z_axis_data_type_qual, 
-        sampling_type = @scanf(record2, "%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i", 
-        Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int)
-   
-        # Record 3
-    record3 = (readline(io))
-    z_rpm_value = parse(Float64, record3[1:15])
-    z_time_value = parse(Float64, record3[16:30])
-    z_order_value = parse(Float64, record3[31:45])
-    num_samples = parse(Float64, record3[46:60]) |> Int             # Single precision in data file but must be Int
-
-
-    n, z_rpm_value, z_time_value, z_order_value, num_samples, _ = @scanf(record3, "%15e%15e%15e%15e%15e", Float64, Float64, Float64, Int, Float64)
-    
-    # Record 4
-    record4 = (readline(io))
-    uv1 = parse(Float64, record4[1:15])
-    uv2 = parse(Float64, record4[16:30])
-    uv3 = parse(Float64, record4[31:45])
-    uv4 = parse(Float64, record4[46:60])
-    exp_window_damping = parse(Float64, record4[61:75])
-
-
-    n, uv1, uv2, uv3, uv4, exp_window_damping = @scanf(record4, "%15e%15e%15e%15e%15e", Float64, Float64, Float64, Float64, Float64)
-    
     # Record 5 Unused
-    _ = readline(io)
-    
-    # Record 6
-    record6 = (readline(io))
-    resp_dir = strip(record6[1:4])
-    ref_dir = strip(record6[7:10])
+    readline(io)
 
+    # Record 6 - FORMAT (2A2,2X,2A2)
+    r6 = readline(io)
+    resp_dir, _, ref_dir = @scanf(r6, "%4c%2c%4c", String, String, String)[2:end]
 
-    n, resp_dir, _, ref_dir = @scanf(record6, "%4c%2c%4c", String, String, String)
+    # Record 7 Unused
+    readline(io)
 
-    _ = readline(io)    # Read unused Record 7
-    _ = readline(io)    # Read trailing "    -1"
-    
+    # Read trailing "    -1"
+    readline(io)
+
     return Dataset1858(
         set_record_number,
         octave_format,
-        meas_run, 
+        meas_run,
         octave_weighting,
         window,
         amp_scaling,
@@ -270,8 +240,8 @@ function parse_dataset1858(io)
         uv3,
         uv4,
         exp_window_damping,
-        resp_dir,
-        ref_dir
+        strip(resp_dir),
+        strip(ref_dir)
     )
 end
 
@@ -297,13 +267,13 @@ function write_dataset(io, dataset::Dataset1858) #::Dataset1858) #the remainder 
     # Field 3       - Measurement run number
     # Fields 4-6    - Not used (fill with zeros)
 
-    line1 = @sprintf("%12i%12i%12i%12i%12i%12i        ",
+    r1 = @sprintf("%12i%12i%12i%12i%12i%12i",
         dataset.set_record_number,
         dataset.octave_format,
         dataset.meas_run,
         0, 0, 0
     )
-    println(io, line1)
+    println(io, r1)
 
     # Write Record 2: FORMAT(12I6)
     # Field 1       - Weighting Type
@@ -316,7 +286,7 @@ function write_dataset(io, dataset::Dataset1858) #::Dataset1858) #the remainder 
     # Field 8       - Z-axis Data Type Qualifier
     # Field 9       - Sampling Type
     # Fields 10-12  - not used (fill with zeros)
-    line2 = @sprintf("%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i        ",
+    r2 = @sprintf("%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i%6i",
         dataset.octave_weighting,
         dataset.window,
         dataset.amp_scaling,
@@ -328,7 +298,7 @@ function write_dataset(io, dataset::Dataset1858) #::Dataset1858) #the remainder 
         dataset.sampling_type,
         0, 0, 0
     )
-    println(io, line2)
+    println(io, r2)
 
     # Write Record 3:     FORMAT  (1P5E15.7)
     # Field 1       - Z RPM value
@@ -336,15 +306,15 @@ function write_dataset(io, dataset::Dataset1858) #::Dataset1858) #the remainder 
     # Field 3       - Z Order value
     # Field 4       - Number of samples
     # Field 5       - not used (fill with zero)
-      
-    line3 = @sprintf("%15.8e%15.8e%15.8e%15.8e%15.8e     ",
+
+    r3 = @sprintf("%15.8e%15.8e%15.8e%15.8e%15.8e",
         dataset.z_rpm_value,
         dataset.z_time_value,
         dataset.z_order_value,
         dataset.num_samples,
         0.0
     )
-    println(io, line3)
+    println(io, r3)
 
     # Write Record 4:     FORMAT  (1P5E15.7)
     # Field 1       - User value 1
@@ -352,36 +322,34 @@ function write_dataset(io, dataset::Dataset1858) #::Dataset1858) #the remainder 
     # Field 3       - User value 3
     # Field 4       - User value 4
     # Field 5       - Exponential window damping factor
-    line4 = @sprintf("%15.8e%15.8e%15.8e%15.8e%15.8e     ",
+    r4 = @sprintf("%15.8e%15.8e%15.8e%15.8e%15.8e",
         dataset.uv1,
         dataset.uv2,
         dataset.uv3,
         dataset.uv4,
         dataset.exp_window_damping
         )
-    println(io, line4)
+    println(io, r4)
 
     # Write Record 5:     FORMAT  (1P5E15.7)
     # Fields 1-5    - not used (fill with zeros)
-    line5 = @sprintf("%15.8e%15.8e%15.8e%15.8e%15.8e     ",
+    r5 = @sprintf("%15.8e%15.8e%15.8e%15.8e%15.8e",
         0.0, 0.0, 0.0, 0.0, 0.0)
-    println(io, line5)
+    println(io, r5)
 
     # Write Record 6:     FORMAT  (2A2,2X,2A2)
     # Field 1       - Response direction
     # Field 2       - Reference direction
-    line6 = @sprintf("%-4s  %-74s", 
+    r6 = @sprintf("%-4s  %-2s",
         dataset.resp_dir,
-        dataset.ref_dir)        
-    println(io, line6)
-    
+        dataset.ref_dir)
+    println(io, r6)
+
     # Write Record 7:     FORMAT  (40A2)
     # Field 1       - not used
-    line7 = @sprintf("%-80s","NONE")
-    println(io, line7)    
-    
+    r7 = @sprintf("%-4s","NONE")
+    println(io, r7)
+
     # Write footer
     println(io, "    -1")
-
-    return nothing
 end

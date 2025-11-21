@@ -21,7 +21,7 @@ Returns a vector of supported UFF dataset types.
 """
 function supported_datasets()
     # Returns a vector of supported UFF dataset types
-    return ["15", "18", "55", "58", "58b", "82", "151", "164", "2411", "2412", "2414"]
+    return ["15", "18", "55", "58", "58b", "82", "151", "164", "1858", "2411", "2412", "2414"]
 end
 
 """

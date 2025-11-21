@@ -16,7 +16,7 @@ function readuff(filename::String)
     # Initialize an array to hold parsed datasets
     data = Vector{UFFDataset}(undef, 0)
     # https://discourse.julialang.org/t/readline-and-end-of-file/64384/4
-    open(filename) do io
+    open(filename, "r") do io
         while !eof(io)
             line = readline(io)
 

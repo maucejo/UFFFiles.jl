@@ -719,34 +719,34 @@ function parse_dataset58(io)
 
   # Record 6
   r6 = readline(io)
-  n, func_type, func_id, version_num, load_case_id, _,
-      response_entity, response_node, response_direction, _,
-      reference_entity, reference_node,  reference_direction=
-      @scanf(r6, "%5i%10i%5i%10i%c%10c%10i%4i%c%10c%10i%4i", Int, Int, Int, Int, Char, String, Int, Int, Char, String, Int, Int)
+  func_type, func_id, version_num, load_case_id, _,
+  response_entity, response_node, response_direction, _,
+  reference_entity, reference_node,  reference_direction =
+  @scanf(r6, "%5i%10i%5i%10i%c%10c%10i%4i%c%10c%10i%4i", Int, Int, Int, Int, Char, String, Int, Int, Char, String, Int, Int)[2:end]
 
   # Record 7
-  r7 = (readline(io))
-  n, ord_dtype, num_pts, abs_spacing_type, abs_min, abs_increment, zval = @scanf(r7, "%10i%10i%10i%13e%13e%13e", Int, Int, Int, Float64, Float64, Float64)
+  r7 = readline(io)
+  ord_dtype, num_pts, abs_spacing_type, abs_min, abs_increment, zval = @scanf(r7, "%10i%10i%10i%13e%13e%13e", Int, Int, Int, Float64, Float64, Float64)[2:end]
 
   # Record 8
-  r8 = (readline(io))
-  n, abs_spec_dtype, abs_len_unit_exp, abs_force_unit_exp, abs_temp_unit_exp, _, abs_axis_label, _, abs_axis_unit_label =
-      @scanf(r8, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
+  r8 = readline(io)
+  abs_spec_dtype, abs_len_unit_exp, abs_force_unit_exp, abs_temp_unit_exp, _, abs_axis_label, _, abs_axis_unit_label =
+      @scanf(r8, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)[2:end]
 
   # Record 9
-  r9 = (readline(io))
-  n, ord_spec_dtype, ord_len_unit_exp, ord_force_unit_exp, ord_temp_unit_exp, _, ord_axis_label, _, ord_axis_unit_label =
-      @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
+  r9 = readline(io)
+  ord_spec_dtype, ord_len_unit_exp, ord_force_unit_exp, ord_temp_unit_exp, _, ord_axis_label, _, ord_axis_unit_label =
+      @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)[2:end]
 
   # Record 10
-  r10 = (readline(io))
-  n, ord_denom_spec_dtype, ord_denom_len_unit_exp, ord_denom_force_unit_exp, ord_denom_temp_unit_exp, _, ord_denom_axis_label, _, ord_denom_axis_unit_label =
-      @scanf(r10, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
+  r10 = readline(io)
+  ord_denom_spec_dtype, ord_denom_len_unit_exp, ord_denom_force_unit_exp, ord_denom_temp_unit_exp, _, ord_denom_axis_label, _, ord_denom_axis_unit_label =
+      @scanf(r10, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)[2:end]
 
   # Record 11
-  r11 = (readline(io))
-  n, z_spec_dtype, z_len_unit_exp, z_force_unit_exp, z_temp_unit_exp, _, z_axis_label, _, z_axis_unit_label =
-  @scanf(r11, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)
+  r11 = readline(io)
+  z_spec_dtype, z_len_unit_exp, z_force_unit_exp, z_temp_unit_exp, _, z_axis_label, _, z_axis_unit_label =
+  @scanf(r11, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)[2:end]
 
   # Record 12
   if (ord_dtype == 2 && abs_spacing_type == 1)
@@ -845,8 +845,7 @@ function parse_dataset58(io)
       i + 2 > num_pts && break  # break if num_pts exceeded
       _data[i] = parse(Float64, r12[34:46])
       _data[i+1] = parse(Float64, r12[47:66])
-      # @show(typeof(data), size(data))
-                  end
+    end
     tmp = reshape(reinterpret(Float64, _data), (2, :))'
     abscissa = tmp[:, 1]
     data = tmp[:, 2]
@@ -859,15 +858,11 @@ function parse_dataset58(io)
     fw = 20   # field width
     for i in 1:n:num_pts
       r12 = readline(io)
-    # @show(i , r12)
       for j in 1:n
         i + j - 1 > num_pts && break  # break if num_pts exceeded
         _data[i+j-1] = parse(Float64, r12[(j-1)*fw+1:j*fw])
       end
-    # @show(typeof(data), size(data))
-      end
-    abscissa = Float64[]
-    data = reinterpret(Float64, _data)
+    end
     abscissa = Float64[]
     data = reinterpret(ComplexF64, _data)
 
@@ -879,65 +874,65 @@ function parse_dataset58(io)
     fw = [13, 20]  # field width
     for i in 1:n:2num_pts
       r12 = readline(io)
-    # @show(i , r12)
       _data[i] = parse(Float64, r12[1:13])
       _data[i+1] = parse(Float64, r12[14:33])
       i + 2 > num_pts && break  # break if num_pts exceeded
       _data[i] = parse(Float64, r12[34:46])
       _data[i+1] = parse(Float64, r12[47:66])
     end
-    # Consume the trailing "    -1"
-    readline(io)
 
-    return Dataset58(
-        id1,
-        id2,
-        id3,
-        id4,
-        id5,
-        func_type,
-        func_id,
-        version_num,
-        load_case_id,
-        response_entity,
-        response_node,
-        response_direction,
-        reference_entity,
-        reference_node,
-        reference_direction,
-        ord_dtype,
-        num_pts,
-        abs_spacing_type,
-        abs_min,
-        abs_increment,
-        zval,
-        abs_spec_dtype,
-        abs_len_unit_exp,
-        abs_force_unit_exp,
-        abs_temp_unit_exp,
-        abs_axis_label,
-        abs_axis_unit_label,
-        ord_spec_dtype,
-        ord_len_unit_exp,
-        ord_force_unit_exp,
-        ord_temp_unit_exp,
-        ord_axis_label,
-        ord_axis_unit_label,
-        ord_denom_spec_dtype,
-        ord_denom_len_unit_exp,
-        ord_denom_force_unit_exp,
-        ord_denom_temp_unit_exp,
-        ord_denom_axis_label,
-        ord_denom_axis_unit_label,
-        z_spec_dtype,
-        z_len_unit_exp,
-        z_force_unit_exp,
-        z_temp_unit_exp,
-        z_axis_label,
-        z_axis_unit_label,
-        abscissa,
-        data
-    )
+    # # Consume the trailing "    -1"
+    # readline(io)
+
+    # return Dataset58(
+    #     id1,
+    #     id2,
+    #     id3,
+    #     id4,
+    #     id5,
+    #     func_type,
+    #     func_id,
+    #     version_num,
+    #     load_case_id,
+    #     response_entity,
+    #     response_node,
+    #     response_direction,
+    #     reference_entity,
+    #     reference_node,
+    #     reference_direction,
+    #     ord_dtype,
+    #     num_pts,
+    #     abs_spacing_type,
+    #     abs_min,
+    #     abs_increment,
+    #     zval,
+    #     abs_spec_dtype,
+    #     abs_len_unit_exp,
+    #     abs_force_unit_exp,
+    #     abs_temp_unit_exp,
+    #     abs_axis_label,
+    #     abs_axis_unit_label,
+    #     ord_spec_dtype,
+    #     ord_len_unit_exp,
+    #     ord_force_unit_exp,
+    #     ord_temp_unit_exp,
+    #     ord_axis_label,
+    #     ord_axis_unit_label,
+    #     ord_denom_spec_dtype,
+    #     ord_denom_len_unit_exp,
+    #     ord_denom_force_unit_exp,
+    #     ord_denom_temp_unit_exp,
+    #     ord_denom_axis_label,
+    #     ord_denom_axis_unit_label,
+    #     z_spec_dtype,
+    #     z_len_unit_exp,
+    #     z_force_unit_exp,
+    #     z_temp_unit_exp,
+    #     z_axis_label,
+    #     z_axis_unit_label,
+    #     abscissa,
+    #     data
+    # )
   end
 
   nd = length(data)
@@ -1072,7 +1067,5 @@ function write_dataset58_data(io, dataset::Dataset58)
             line = join([@sprintf(" %12.5E %19.12E %19.12E", a, real(o), imag(o)) for (a, o) in zip(dataset.abscissa[i:ie], dataset.data[i:ie])])
             println(io, line)
         end
-    end
-
-    return nothing
+      end
 end

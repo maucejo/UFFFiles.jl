@@ -430,23 +430,29 @@ Universal Dataset Number: 55
                       Unused Values = 0.
 """
 function parse_dataset55(io)
-     # Parse Record 1 to 5
+     # Record 1 to 5 - Format (40A2)
      id1 = strip(readline(io))
      id2 = strip(readline(io))
      id3 = strip(readline(io))
      id4 = strip(readline(io))
      id5 = strip(readline(io))
 
-     # Parse Record 6
-     model_type, analysis_type, data_charac, spec_dtype, dtype, ndv_per_node = parse.(Int, split(strip(readline(io))))
+     # Parse Record 6 - Format (6I10)
+     r6 = readline(io)
+     model_type, analysis_type, data_charac, spec_dtype, dtype, ndv_per_node = @scanf(r6, "%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int)[2:end]
+     # model_type, analysis_type, data_charac, spec_dtype, dtype, ndv_per_node = parse.(Int, split(strip(readline(io))))
 
-     # Parse Record 7
-     r7_raw = parse.(Int, split(strip(readline(io))))
+     # Record 7 - Format (8I10)
+     r7 = readline(io)
+     r7_raw = @scanf(r7, "%10d%10d%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int, Int, Int)[2:end]
+     # r7_raw = parse.(Int, split(strip(readline(io))))
 
-     # Parse Record 8
-     r8_raw = parse.(Float64, split(strip(readline(io))))
+     # Record 8 - Format (6E13.5)
+     r8 = readline(io)
+     r8_raw = @scanf(r8, "%13e%13e%13e%13e%13e%13e", Float64, Float64, Float64, Float64, Float64, Float64)[2:end]
+     # r8_raw = parse.(Float64, split(strip(readline(io))))
 
-     # Parse Record 9 and 10
+     # Record 9 and 10
      node_number = Int[]
      data, ndv = if dtype == 2
           Vector{Float64}[], ndv_per_node
@@ -456,15 +462,16 @@ function parse_dataset55(io)
 
      # Start parsing from Record 9 and 10
      _data = similar(eltype(data), 0)
-     while (record09 = readline(io)) != "    -1"
-          # Record 9
-          push!(node_number, parse(Int, strip(record09)))
+     while (r9 = readline(io)) != "    -1"
+          # Record 9 - Format (I10)
+          push!(node_number, parse(Int, strip(r9)))
 
-          # Record 10
+          # Record 10 - Format (6E13.5)
           record10 = readline(io)
           nv = 0
           while nv < ndv
-               r10 = parse.(Float64, split(strip(record10)))
+               r10 = @scanf(record10, "%13e%13e%13e%13e%13e%13e", Float64, Float64, Float64, Float64, Float64, Float64)[2:end]
+               # r10 = parse.(Float64, split(strip(record10)))
                nv += length(r10)
 
                if dtype == 2
@@ -523,7 +530,7 @@ function write_dataset(io, dataset::Dataset55)
     println(io, " "^9 * dataset.id5)
 
     # Write Record 6: format 6I10
-    line6 = @sprintf("%10d%10d%10d%10d%10d%10d",
+    r6 = @sprintf("%10d%10d%10d%10d%10d%10d",
         dataset.model_type,
         dataset.analysis_type,
         dataset.data_charac,
@@ -531,7 +538,7 @@ function write_dataset(io, dataset::Dataset55)
         dataset.dtype,
         dataset.ndv_per_node
     )
-    println(io, line6)
+    println(io, r6)
 
     # Write Record 7: format 8I10
     # Get r7_raw from the r7 NamedTuple
@@ -554,8 +561,8 @@ function write_dataset(io, dataset::Dataset55)
 
     for i in 1:nnodes
         # Record 9: format I10 - node number
-        line9 = @sprintf("%10d", dataset.node_number[i])
-        println(io, line9)
+        r9 = @sprintf("%10d", dataset.node_number[i])
+        println(io, r9)
 
         # Record 10: format 6E13.5 - data values
         # Get data for this node
@@ -589,6 +596,4 @@ function write_dataset(io, dataset::Dataset55)
 
     # Write footer
     println(io, "    -1")
-
-    return nothing
 end

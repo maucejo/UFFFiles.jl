@@ -55,17 +55,20 @@ function parse_dataset2411(io)
     coord_system = similar(nodes_ID)
     disp_coord_system = similar(nodes_ID)
     color = similar(nodes_ID)
-    node_coords = Matrix{Float64}(undef, 0, 3)
+    node_coords = Vector{Float64}[]
 
     while (r1 = readline(io)) != "    -1"
-        tmp = parse.(Int, split(r1))
-        push!(nodes_ID, tmp[1])
-        push!(coord_system, tmp[2])
-        push!(disp_coord_system, tmp[3])
-        push!(color, tmp[4])
+        # Record 1: 4I10
+        nid, cs, dcs, col = @scanf(r1, "%10d%10d%10d%10d", Int, Int, Int, Int)[2:end]
+        push!(nodes_ID, nid)
+        push!(coord_system, cs)
+        push!(disp_coord_system, dcs)
+        push!(color, col)
 
+        # Record 2: 1P3D25.16
         r2 = readline(io)
-        node_coords = vcat(node_coords, parse.(Float64, split(r2))')
+        x, y, z = @scanf(r2, "%25e%25e%25e", Float64, Float64, Float64)[2:end]
+        push!(node_coords, [x, y, z])
     end
 
     return Dataset2411(
@@ -73,7 +76,7 @@ function parse_dataset2411(io)
         coord_system,
         disp_coord_system,
         color,
-        node_coords
+        reduce(hcat, node_coords)'
     )
 end
 
@@ -88,45 +91,38 @@ Write a UFF Dataset 2411 (Nodes - Double Precision) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset2411)
+function write_dataset(io, dataset::Dataset2411)
     # Follow the docstring format for UFF 2411 (Nodes - Double Precision)
     # Record 1: 4I10 (node label, export CS, displacement CS, color)
     # Record 2: 1P3D25.16 (x, y, z coordinates)
-    lines = String[]
 
     # Header
-    push!(lines, "    -1")
-    push!(lines, "  2411")
+    println(io, "    -1")
+    println(io, "  2411")
 
     # Ensure we can iterate consistently over nodes
     nnodes = length(dataset.nodes_ID)
 
     for i in 1:nnodes
         # Record 1: integers in width 10
-        push!(
-            lines,
-            @sprintf("%10d%10d%10d%10d",
+        r1 = @sprintf("%10d%10d%10d%10d",
                 dataset.nodes_ID[i],
                 dataset.coord_system[i],
                 dataset.disp_coord_system[i],
                 dataset.color[i]
-            ),
-        )
+            )
+        println(io, r1)
 
         # Record 2: three double-precision values, width 25 with 16 decimals
         # Using E-format is acceptable; parser splits by whitespace.
-        push!(
-            lines,
-            @sprintf("%25.16E%25.16E%25.16E",
+        r2 = @sprintf("%25.16e%25.16e%25.16e",
                 dataset.node_coords[i, 1],
                 dataset.node_coords[i, 2],
                 dataset.node_coords[i, 3]
-            ),
-        )
+            )
+        println(io, r2)
     end
 
     # Footer
-    push!(lines, "    -1")
-
-    return lines
+    println(io, "    -1")
 end

@@ -20,7 +20,7 @@ A struct containing UFF Dataset 15 (Nodes) data .
     def_cs_num::Vector{Int}          # Record 1 - field 2
     disp_cs_num::Vector{Int}         # Record 1 - field 3
     color::Vector{Int}               # Record 1 - field 4
-    node_coords::Matrix{Float64}  # Record 1 - fields 5 to 7
+    node_coords::Matrix{Float64}     # Record 1 - fields 5 to 7
 
     Dataset15(
         node_ID = Int[],
@@ -54,22 +54,8 @@ function parse_dataset15(io)
     color = Int[]
     node_coords = Vector{Float64}[]
 
-    # while  (r1 = readline(io)) != "    -1"
-    #     # Use sprintf here
-    #     nid, dcs, disp_cs, col = parse.(Int, strip.(r1[1:4]))
-    #     x, y, z = parse.(Float64, strip.(r1[5:end]))
-
-    #     push!(node_ID, nid)
-    #     push!(def_cs_num, dcs)
-    #     push!(disp_cs_num, disp_cs)
-    #     push!(color, col)
-    #     push!(coords, [x, y, z])
-    # end
-
     while  (line = readline(io)) != "    -1"
-        r1 = split(line)
-        nid, dcs, disp_cs, col = parse.(Int, strip.(r1[1:4]))
-        x, y, z = parse.(Float64, strip.(r1[5:end]))
+        nid, dcs, disp_cs, col, x, y, z = @scanf(line, "%10d%10d%10d%10d%13e%13e%13e", Int, Int, Int, Int, Float64, Float64, Float64)[2:end]
 
         push!(node_ID, nid)
         push!(def_cs_num, dcs)
@@ -112,15 +98,13 @@ function write_dataset(io, dataset::Dataset15)
             dataset.def_cs_num[i],
             dataset.disp_cs_num[i],
             dataset.color[i],
-            dataset.coords[i][1],
-            dataset.coords[i][2],
-            dataset.coords[i][3]
+            dataset.node_coords[i, 1],
+            dataset.node_coords[i, 2],
+            dataset.node_coords[i, 3]
         )
         println(io, line)
     end
 
     # Write footer
     println(io, "    -1")
-
-    return nothing
 end

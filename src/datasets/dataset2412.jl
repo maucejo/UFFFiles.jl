@@ -247,11 +247,11 @@ Universal Dataset Number: 2412
 """
 function parse_dataset2412(io)
 
-    reset(io)
-    block = String[]
-    while (line = readline(io)) != "    -1"
-        push!(block, line)
-    end
+    # reset(io)
+    # block = String[]
+    # while (line = readline(io)) != "    -1"
+    #     push!(block, line)
+    # end
 
     elements_ID = Int[]
     fe_descriptor_id = Int[]
@@ -262,12 +262,14 @@ function parse_dataset2412(io)
     connectivity = Vector{Int}[]
     beam_info = Vector{Int}[]
 
-    i = 2  # Start reading from line 2 (after dataset type)
-    nlines = length(block)
+    # i = 2  # Start reading from line 2 (after dataset type)
+    # nlines = length(block)
     nodes_elt = Int[]
-    while i ≤ nlines
-        # Read Record 1
-        elt, fed, pprop, mprop, col, nnode = parse.(Int, split(block[i]))
+    # while i ≤ nlines
+    while (r1 = readline(io)) != "    -1"
+        # Record 1 - (6I10)
+        elt, fed, pprop, mprop, col, nnode = @scanf(r1, "%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int)[2:end]
+        # elt, fed, pprop, mprop, col, nnode = parse.(Int, split(block[i]))
         push!(elements_ID, elt)
         push!(fe_descriptor_id, fed)
         push!(phys_property, pprop)
@@ -276,28 +278,33 @@ function parse_dataset2412(io)
         push!(nodes_per_elt, nnode)
 
         if fed in [11, 21, 22, 23, 24]  # Beam elements
-            # Read Record 2 (beam info)
-            i += 1
-            push!(beam_info, parse.(Int, split(block[i])))
+            # Record 2 (beam info) - FORMAT(3I10)
+            r2 = readline(io)
+            beam_orient, cross_sec_fore, cross_sec_aft = @scanf(r2, "%10d%10d%10d", Int, Int, Int)[2:end]
+            push!(beam_info, [beam_orient, cross_sec_fore, cross_sec_aft])
+            # push!(beam_info, parse.(Int, split(block[i])))
 
-            # Read Record 3 (connectivity)
-            i += 1
-            push!(connectivity, parse.(Int, split(block[i])))
-        else  # Non-beam elements
-            # Read Record 2 (connectivity)
+            # Read Record 3 (connectivity) - FORMAT(8I10)
+            r3 = readline(io)
+            nodes = @scanf(r3, "%10d%10d%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int, Int, Int)[2:end]
+            push!(connectivity, [nodes[1:nnode]...])
+            # push!(connectivity, parse.(Int, split(block[i])))
+        else  # Non-beam elements - FORMAT (8I10)
+            # Record 2 (connectivity)
             npe = 0
             while npe < nnode
-                i += 1
-                r2 = parse.(Int, split(block[i]))
-                append!(nodes_elt, r2)
-                npe += length(r2)
+                r2 = readline(io)
+                nodes = @scanf(r2, "%10d%10d%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int, Int, Int)[2:end]
+                # r2 = parse.(Int, split(block[i]))
+                append!(nodes_elt, [nodes[1:nnode]...])
+                npe += length(nodes[1:nnode])
             end
 
             push!(connectivity, copy(nodes_elt))
             empty!(nodes_elt)
         end
 
-        i += 1
+        # i += 1
     end
 
     return Dataset2412(
@@ -323,17 +330,15 @@ Write a UFF Dataset 2412 (Elements) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset2412)
-    lines = String[]
-
+function write_dataset(io, dataset::Dataset2412)
     # Write header
-    push!(lines, "    -1")
-    push!(lines, "  2412")
+    println(io, "    -1")
+    println(io, "  2412")
 
     # Write element data
     for i in eachindex(dataset.elements_ID)
         # Record 1: FORMAT(6I10) - element info
-        line = @sprintf("%10d%10d%10d%10d%10d%10d",
+        r1 = @sprintf("%10d%10d%10d%10d%10d%10d",
             dataset.elements_ID[i],
             dataset.fe_descriptor_id[i],
             dataset.phys_property[i],
@@ -341,7 +346,7 @@ function write_dataset(dataset::Dataset2412)
             dataset.color[i],
             dataset.nodes_per_elt[i]
         )
-        push!(lines, line)
+        println(io, r1)
 
         # Check if beam element
         if dataset.fe_descriptor_id[i] in [11, 21, 22, 23, 24]
@@ -351,7 +356,7 @@ function write_dataset(dataset::Dataset2412)
                 dataset.beam_info[i][2],
                 dataset.beam_info[i][3]
             )
-            push!(lines, beam_line)
+            println(io, beam_line)
         end
 
         # Record 2 (non-beam) or Record 3 (beam): FORMAT(8I10) - connectivity
@@ -366,12 +371,10 @@ function write_dataset(dataset::Dataset2412)
             for k in j:end_idx
                 nodes_line *= @sprintf("%10d", nodes[k])
             end
-            push!(lines, nodes_line)
+            println(io, nodes_line)
         end
     end
 
     # Write footer
-    push!(lines, "    -1")
-
-    return lines
+    println(io, "    -1")
 end
