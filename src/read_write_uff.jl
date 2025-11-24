@@ -11,6 +11,11 @@ Reads a UFF (Universal File Format) file and parses its contents into a vector o
 """
 function readuff(filename::String)
 
+    file_extension = split(filename, ".")[end]
+    if !(file_extension in supported_file_extensions())
+        throw(ArgumentError("File extension .$file_extension may not be supported for UFF files."))
+    end
+
     # Initialize an array to hold parsed datasets
     data = Vector{UFFDataset}(undef, 0)
     # https://discourse.julialang.org/t/readline-and-end-of-file/64384/4
@@ -57,11 +62,23 @@ Writes a vector of UFFDataset objects to a UFF file.
 - `filename::String`: The path to the UFF file to be written.
 - `datasets::Vector{UFFDataset}`: A vector containing the UFF datasets to be
 written.
+- `w58b::Bool`: Optional flag to indicate if Dataset58 format must be written in binary format (default: false).
 """
-function writeuff(filename::String, datasets)
+function writeuff(filename::String, datasets; w58b::Bool = false)
+    file_extension = split(filename, ".")[end]
+    if !(file_extension in supported_file_extensions())
+        throw(ArgumentError("File extension .$file_extension may not be supported for UFF files."))
+    end
+
     open(filename, "w") do io
         for dataset in datasets
-            write_dataset(io, dataset)
+
+            # Particular handling for Dataset58b
+            if dataset isa Dataset58
+                write_dataset(io, dataset, w58b = w58b)
+            else
+                write_dataset(io, dataset)
+            end
         end
     end
 end

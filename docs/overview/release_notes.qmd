@@ -10,9 +10,17 @@ format:
 
 **Breaking changes**
 
-- `conversion_factors` field in `Dataset164` struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to [@JakeZw](https://github.com/Spectrum-Tec) for submitting the PR.
+- Code
+  - The code has been refactored to reduce the memory footprint when parsing UFF files.
+  - The function `supported_file_extensions` has been added to list supported UFF file extensions.
+  - `readuff` and `writeuff` functions now check the file extension and throw an error if it is not supported.
 
-- `node_coords` field in `Dataset15` struct has been changed from `Vector{Vector{Float64}}` to `Matrix{Float64}` for easier manipulation of node coordinates and consistency with `Dataset2411`.
+- Datasets
+  - `readuff` and `writeuff` now can now read and write binary `Dataset58`. Thanks to [@JakeZw](https://github.com/Spectrum-Tec) for submitting the PR.
+
+  - `conversion_factors` field in `Dataset164` struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to [@JakeZw](https://github.com/Spectrum-Tec) for submitting the PR.
+
+  - `node_coords` field in `Dataset15` struct has been changed from `Vector{Vector{Float64}}` to `Matrix{Float64}` for easier manipulation of node coordinates and consistency with `Dataset2411`.
 
 
 ## v0.2.1

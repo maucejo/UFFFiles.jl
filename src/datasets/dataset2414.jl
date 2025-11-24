@@ -801,36 +801,41 @@ Universal Dataset Number: 2414
 ----------------------------------------------------------------------
 """
 function parse_dataset2414(io)
+    # Record 1 - FORMAT(1I10)
+    analysis_dlabel = parse(Int, strip(readline(io)))
 
-    reset(io)
-    block = String[]
-    while (line = readline(io)) != "    -1"
-        push!(block, line)
-    end
+    # Record 2 - FORMAT(40A2)
+    analysis_dname = strip(readline(io))
 
-    nlines = length(block)
+    # Record 3 - FORMAT (1I10)
+    dataset_location = parse(Int, strip(readline(io)))
 
-    analysis_dlabel = parse(Int, strip(block[2]))
-    analysis_dname = strip(block[3])
-    dataset_location = parse(Int, strip(block[4]))
-    id_line1 = strip(block[5])
-    id_line2 = strip(block[6])
-    id_line3 = strip(block[7])
-    id_line4 = strip(block[8])
-    id_line5 = strip(block[9])
+    # Records 4-8 - FORMAT (40A2)
+    id_line1 = strip(readline(io))
+    id_line2 = strip(readline(io))
+    id_line3 = strip(readline(io))
+    id_line4 = strip(readline(io))
+    id_line5 = strip(readline(io))
 
-    # Record 9 fields
-    model_type, analysis_type, data_characteristic, result_type, dtype, num_data_values = parse.(Int, split(strip(block[10])))
+    # Record 9 - FORMAT (6I10)
+    r9 = readline(io)
+    model_type, analysis_type, data_characteristic, result_type, dtype, num_data_values = @scanf(r9, "%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int)[2:end]
 
-    # Record 10-11 fields
+    # Record 10-11 fields - FORMAT (8I10)
     int_analysis_type_raw = Int[]
-    append!(int_analysis_type_raw, parse.(Int, split(strip(block[11]))))
-    append!(int_analysis_type_raw, parse.(Int, split(strip(block[12]))))
+    r10 = readline(io)
+    r11 = readline(io)
 
-    # Record 12-13 fields
+    append!(int_analysis_type_raw, parse.(Int, split(strip(r10))))
+    append!(int_analysis_type_raw, parse.(Int, split(strip(r11))))
+
+    # Record 12-13 fields - FORMAT (6E13.5)
     real_analysis_type_raw = Float64[]
-    append!(real_analysis_type_raw, parse.(Float64, split(strip(block[13]))))
-    append!(real_analysis_type_raw, parse.(Float64, split(strip(block[14]))))
+    r12 = readline(io)
+    r13 = readline(io)
+
+    append!(real_analysis_type_raw, parse.(Float64, split(strip(r12))))
+    append!(real_analysis_type_raw, parse.(Float64, split(strip(r13))))
 
     # record 14_15 fields
     data_info_raw = Vector{Int}[]
@@ -846,13 +851,12 @@ function parse_dataset2414(io)
         Vector{ComplexF64}[], 2num_data_values, Float64
     end
 
-    i = 15
     data_exp = 1
     total_vals = ndv
     _values = similar(eltype(data_value_raw), 0)
-    while i < nlines
+    while  (r14 = readline(io)) != "    -1"
         # Record 14
-        push!(data_info_raw, parse.(Int, split(strip(block[i]))))
+        push!(data_info_raw, parse.(Int, split(strip(r14))))
 
         if dataset_location == 3 || dataset_location == 5
             data_exp = data_info_raw[end][2]
@@ -869,25 +873,24 @@ function parse_dataset2414(io)
         # Record 15
         np = 0
         while np < total_vals
-            i += 1
-            r15 = parse.(data_type, split(strip(block[i])))
-            np += length(r15)
+            r15 = readline(io)
+            r15_data = parse.(data_type, split(strip(r15)))
+            np += length(r15_data)
 
             # Repeat values if necessary
             if data_exp == 2
-                r15 = repeat(r15, nnodes)
+                r15_data = repeat(r15_data, nnodes)
             end
 
             if dtype < 5
-                append!(_values, r15)
+                append!(_values, r15_data)
             else
-                append!(_values, complex.(r15[1:2:end], r15[2:2:end]))
+                append!(_values, complex.(r15_data[1:2:end], r15_data[2:2:end]))
             end
         end
 
         push!(data_value_raw, copy(_values))
         empty!(_values)
-        i += 1
     end
 
     return Dataset2414(
@@ -923,42 +926,37 @@ Write a UFF Dataset 2414 (Analysis Data) to a vector of strings.
 **Output**
 - `Vector{String}`: Vector of formatted strings representing the UFF file content
 """
-function write_dataset(dataset::Dataset2414)
-    # Follow the docstring format for UFF 2414 (Analysis Data)
-    lines = String[]
-
-    # Header
-    push!(lines, "    -1")
-    push!(lines, "  2414")
+function write_dataset(io, dataset::Dataset2414)
+   # Header
+    println(io, "    -1")
+    println(io, "  2414")
 
     # Record 1: Analysis dataset label (FORMAT 1I10)
-    push!(lines, @sprintf("%10d", dataset.analysis_dlabel))
+    println(io, @sprintf("%10d", dataset.analysis_dlabel))
 
     # Record 2: Analysis dataset name (FORMAT 40A2)
-    push!(lines, dataset.analysis_dname)
+    println(io, dataset.analysis_dname)
 
     # Record 3: Dataset location (FORMAT 1I10)
-    push!(lines, @sprintf("%10d", dataset.dataset_location))
+    println(io, @sprintf("%10d", dataset.dataset_location))
 
     # Records 4-8: ID lines (FORMAT 40A2 each)
-    push!(lines, dataset.id_line1)
-    push!(lines, dataset.id_line2)
-    push!(lines, dataset.id_line3)
-    push!(lines, dataset.id_line4)
-    push!(lines, dataset.id_line5)
+    println(io, dataset.id_line1)
+    println(io, dataset.id_line2)
+    println(io, dataset.id_line3)
+    println(io, dataset.id_line4)
+    println(io, dataset.id_line5)
 
     # Record 9: Six integer fields (FORMAT 6I10)
-    push!(
-        lines,
-        @sprintf("%10d%10d%10d%10d%10d%10d",
-            dataset.model_type,
-            dataset.analysis_type,
-            dataset.data_characteristic,
-            dataset.result_type,
-            dataset.dtype,
-            dataset.num_data_values
-        )
+    r9 = @sprintf("%10d%10d%10d%10d%10d%10d",
+        dataset.model_type,
+        dataset.analysis_type,
+        dataset.data_characteristic,
+        dataset.result_type,
+        dataset.dtype,
+        dataset.num_data_values
     )
+    println(io, r9)
 
     # Get raw integer analysis type data (expand NamedTuple back to array)
     int_raw = zeros(Int, 10)
@@ -987,21 +985,15 @@ function write_dataset(dataset::Dataset2414)
     end
 
     # Record 10: First 8 integer analysis type specific data (FORMAT 8I10)
-    push!(
-        lines,
-        @sprintf("%10d%10d%10d%10d%10d%10d%10d%10d",
+    r10 = @sprintf("%10d%10d%10d%10d%10d%10d%10d%10d",
             int_raw[1], int_raw[2], int_raw[3], int_raw[4],
             int_raw[5], int_raw[6], int_raw[7], int_raw[8]
         )
-    )
+    println(io, r10)
 
     # Record 11: Last 2 integer analysis type specific data (FORMAT 8I10, but only 2 used)
-    push!(
-        lines,
-        @sprintf("%10d%10d",
-            int_raw[9], int_raw[10]
-        )
-    )
+    r11 = @sprintf("%10d%10d", int_raw[9], int_raw[10])
+    println(io, r11)
 
     # Get raw real analysis type data (expand NamedTuple back to array)
     real_raw = zeros(Float64, 12)
@@ -1034,44 +1026,41 @@ function write_dataset(dataset::Dataset2414)
     end
 
     # Record 12: First 6 real analysis type specific data (FORMAT 6E13.5)
-    push!(
-        lines,
-        @sprintf("  %.5E  %.5E  %.5E  %.5E  %.5E  %.5E",
-            real_raw[1], real_raw[2], real_raw[3],
-            real_raw[4], real_raw[5], real_raw[6]
-        )
+    r12 = @sprintf("  %.5E  %.5E  %.5E  %.5E  %.5E  %.5E",
+        real_raw[1], real_raw[2], real_raw[3],
+        real_raw[4], real_raw[5], real_raw[6]
     )
+    println(io, r12)
 
     # Record 13: Last 6 real analysis type specific data (FORMAT 6E13.5)
-    push!(
-        lines,
-        @sprintf("  %.5E  %.5E  %.5E  %.5E  %.5E  %.5E",
-            real_raw[7], real_raw[8], real_raw[9],
-            real_raw[10], real_raw[11], real_raw[12]
-        )
+    r13 = @sprintf("  %.5E  %.5E  %.5E  %.5E  %.5E  %.5E",
+        real_raw[7], real_raw[8], real_raw[9],
+        real_raw[10], real_raw[11], real_raw[12]
     )
+    println(io, r13)
 
     # Records 14-15: Data records depend on dataset_location
     if dataset.dataset_location == 1
         # Data at nodes
         for i in 1:length(dataset.data_info.node_ID)
             # Record 14: Node number (FORMAT I10)
-            push!(lines, @sprintf("%10d", dataset.data_info.node_ID[i]))
+            r14  = @sprintf("%10d", dataset.data_info.node_ID[i])
+            println(io, r14)
 
             # Record 15: Data values (FORMAT 6E13.5)
             # Get data for this node
             data_vals = if dataset.dtype < 5
-                # Real or integer data
-                vec(dataset.data_value[:, i])
-            else
-                # Complex data: interleave real and imaginary parts
-                vals = Float64[]
-                for val in dataset.data_value[:, i]
-                    push!(vals, real(val))
-                    push!(vals, imag(val))
-                end
-                vals
-            end
+                            # Real or integer data
+                            vec(dataset.data_value[i, :])
+                        else
+                            # Complex data: interleave real and imaginary parts
+                            vals = Float64[]
+                            for val in dataset.data_value[i, :]
+                                push!(vals, real(val))
+                                push!(vals, imag(val))
+                            end
+                            vals
+                        end
 
             # Write data values, 6 per line
             for j in 1:6:length(data_vals)
@@ -1079,8 +1068,8 @@ function write_dataset(dataset::Dataset2414)
                 line_vals = data_vals[j:end_idx]
 
                 # Format based on data type - FORMAT 6E13.5
-                parts = [@sprintf("%13.5E", Float64(val)) for val in line_vals]
-                push!(lines, join(parts, ""))
+                parts = join([@sprintf("%13.5E", Float64(val)) for val in line_vals], "")
+                println(io, parts)
             end
         end
 
@@ -1089,7 +1078,8 @@ function write_dataset(dataset::Dataset2414)
         for i in 1:length(dataset.data_info.elt_ID)
             # Record 14: Element number, Number of data values (FORMAT 2I10)
             ndv = length(dataset.data_value[i])
-            push!(lines, @sprintf("%10d%10d", dataset.data_info.elt_ID[i], ndv))
+            r14  = @sprintf("%10d%10d", dataset.data_info.elt_ID[i], ndv)
+            println(io, r14)
 
             # Record 15: Data values (FORMAT 6E13.5)
             data_vals = if dataset.dtype < 5
@@ -1111,8 +1101,8 @@ function write_dataset(dataset::Dataset2414)
                 line_vals = data_vals[j:end_idx]
 
                 # Format based on data type - FORMAT 6E13.5
-                parts = [@sprintf("%13.5E", Float64(val)) for val in line_vals]
-                push!(lines, join(parts, ""))
+                parts = join([@sprintf("%13.5E", Float64(val)) for val in line_vals], "")
+                println(io, parts)
             end
         end
 
@@ -1120,15 +1110,13 @@ function write_dataset(dataset::Dataset2414)
         # Data at nodes on elements
         for i in 1:length(dataset.data_info.elt_ID)
             # Record 14: Element number, Data expansion code, Number of nodes, Number of values per node (FORMAT 4I10)
-            push!(
-                lines,
-                @sprintf("%10d%10d%10d%10d",
-                    dataset.data_info.elt_ID[i],
-                    dataset.data_info.data_exp_code[i],
-                    dataset.data_info.nnodes_per_elt[i],
-                    dataset.data_info.ndv_per_node[i]
-                )
+            r14 = @sprintf("%10d%10d%10d%10d",
+                dataset.data_info.elt_ID[i],
+                dataset.data_info.data_exp_code[i],
+                dataset.data_info.nnodes_per_elt[i],
+                dataset.data_info.ndv_per_node[i]
             )
+            println(io, r14)
 
             # Record 15: Data values (FORMAT 6E13.5)
             # Handle expansion code: 1 = all nodes, 2 = only first node (all others same)
@@ -1164,8 +1152,8 @@ function write_dataset(dataset::Dataset2414)
                 line_vals = data_vals[j:end_idx]
 
                 # Format based on data type - FORMAT 6E13.5
-                parts = [@sprintf("%13.5E", Float64(val)) for val in line_vals]
-                push!(lines, join(parts, ""))
+                parts = join([@sprintf("%13.5E", Float64(val)) for val in line_vals], "")
+                println(io, parts)
             end
         end
 
@@ -1173,16 +1161,14 @@ function write_dataset(dataset::Dataset2414)
         # Data at points
         for i in 1:length(dataset.data_info.elt_ID)
             # Record 14: Element number, Data expansion code, Number of points, Number of values per point, Element order (FORMAT 5I10)
-            push!(
-                lines,
-                @sprintf("%10d%10d%10d%10d%10d",
-                    dataset.data_info.elt_ID[i],
-                    dataset.data_info.data_exp_code[i],
-                    dataset.data_info.npts_per_elt[i],
-                    dataset.data_info.ndv_per_point[i],
-                    dataset.data_info.elt_order[i]
-                )
+            r14 = @sprintf("%10d%10d%10d%10d%10d",
+                dataset.data_info.elt_ID[i],
+                dataset.data_info.data_exp_code[i],
+                dataset.data_info.npts_per_elt[i],
+                dataset.data_info.ndv_per_point[i],
+                dataset.data_info.elt_order[i]
             )
+            println(io, r14)
 
             # Record 15: Data values (FORMAT 6E13.5)
             # Handle expansion code: 1 = all points, 2 = only first point (all others same)
@@ -1218,14 +1204,12 @@ function write_dataset(dataset::Dataset2414)
                 line_vals = data_vals[j:end_idx]
 
                 # Format based on data type - FORMAT 6E13.5
-                parts = [@sprintf("%13.5E", Float64(val)) for val in line_vals]
-                push!(lines, join(parts, ""))
+                parts = join([@sprintf("%13.5E", Float64(val)) for val in line_vals], "")
+                println(io, parts)
             end
         end
     end
 
     # Footer
-    push!(lines, "    -1")
-
-    return lines
+    println(io, "    -1")
 end

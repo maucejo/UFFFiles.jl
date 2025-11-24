@@ -180,12 +180,14 @@ end
 Write a UFF Dataset 58 (Function Data) to a vector of strings.
 
 **Input**
+- `io`: The IO stream to write to.
 - `dataset::Dataset58`: The Dataset58 instance to write.
+- `w58b::Bool`: Optional flag to indicate if Dataset58 format must be written in binary format (default: false).
 
 **Output**
 - `Vector{String}`: A vector of strings representing the lines of the dataset.
 """
-function write_dataset(io, dataset::Dataset58)
+function write_dataset(io, dataset::Dataset58; w58b::Bool = false)
     # the abcissa for uneven double precision ASCII datasets are Float32.
     # the abscissa for uneven double precision binary datasets are Float64
     # Start marker
@@ -306,7 +308,7 @@ function write_dataset(io, dataset::Dataset58)
 
     # Record 12: Data Values
     # Call binary or ASCII routine
-    if dataset.binary
+    if w58b
         write_dataset58b_data(io, dataset)
     else
         write_dataset58_data(io, dataset)

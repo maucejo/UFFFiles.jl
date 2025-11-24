@@ -29,19 +29,30 @@ Currently, `UFFFiles.jl` supports reading and writing UFF files with the followi
 * Dataset 15
 * Dataset 18
 * Dataset 55
-* Dataset 58
+* Dataset 58 and 58b
 * Dataset 82
 * Dataset 151
 * Dataset 164
+* Dataset 1858
 * Dataset 2411
 * Dataset 2412
 * Dataset 2414
+
+## Supported file extensions
+The package supports UFF files with the following extensions:
+
+* `.unv`
+* `.uff`
+* `.uf`
+* `.bunv`
+* `.ufb`
+* `.buf`
 
 ## Contributing
 
 Contributions are welcome! If you encounter any issues or have suggestions for improvements, please open an issue or submit a pull request on the [GitHub repository](https://github.com/maucejo/UFFFiles.jl).
 
-To make contributions easier, please provide `*.unv` or `*.uff` files that can be used as test cases for the new features or bug fixes.
+To make contributions easier, please provide universal files that can be used as test cases for the new features or bug fixes.
 
 ## Acknowledgements
 
