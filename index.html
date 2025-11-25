@@ -200,6 +200,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#supported-formats" id="toc-supported-formats" class="nav-link active" data-scroll-target="#supported-formats">Supported formats</a></li>
+  <li><a href="#supported-file-extensions" id="toc-supported-file-extensions" class="nav-link" data-scroll-target="#supported-file-extensions">Supported file extensions</a></li>
   <li><a href="#contributing" id="toc-contributing" class="nav-link" data-scroll-target="#contributing">Contributing</a></li>
   <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link" data-scroll-target="#acknowledgements">Acknowledgements</a></li>
   <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">Reproducibility</a></li>
@@ -255,19 +256,32 @@ Warning
 <li>Dataset 15</li>
 <li>Dataset 18</li>
 <li>Dataset 55</li>
-<li>Dataset 58</li>
+<li>Dataset 58 and 58b</li>
 <li>Dataset 82</li>
 <li>Dataset 151</li>
 <li>Dataset 164</li>
+<li>Dataset 1858</li>
 <li>Dataset 2411</li>
 <li>Dataset 2412</li>
 <li>Dataset 2414</li>
 </ul>
 </section>
+<section id="supported-file-extensions" class="level2">
+<h2 class="anchored" data-anchor-id="supported-file-extensions">Supported file extensions</h2>
+<p>The package supports UFF files with the following extensions:</p>
+<ul>
+<li><code>.unv</code></li>
+<li><code>.uff</code></li>
+<li><code>.uf</code></li>
+<li><code>.bunv</code></li>
+<li><code>.ufb</code></li>
+<li><code>.buf</code></li>
+</ul>
+</section>
 <section id="contributing" class="level2">
 <h2 class="anchored" data-anchor-id="contributing">Contributing</h2>
 <p>Contributions are welcome! If you encounter any issues or have suggestions for improvements, please open an issue or submit a pull request on the <a href="https://github.com/maucejo/UFFFiles.jl">GitHub repository</a>.</p>
-<p>To make contributions easier, please provide <code>*.unv</code> or <code>*.uff</code> files that can be used as test cases for the new features or bug fixes.</p>
+<p>To make contributions easier, please provide universal files that can be used as test cases for the new features or bug fixes.</p>
 </section>
 <section id="acknowledgements" class="level2">
 <h2 class="anchored" data-anchor-id="acknowledgements">Acknowledgements</h2>
@@ -289,9 +303,11 @@ Project direct dependencies
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><code>UFFFiles.jl</code> has the following direct dependencies.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Project UFFFiles v0<span class="fl">.2.0</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Project UFFFiles v1<span class="fl">.0.0</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Status</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  [de0858da] <span class="bu">Printf</span> v1<span class="fl">.11.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  [<span class="fl">6</span>ef1bc8b] Scanf v0<span class="fl">.5.4</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  [ade2ca70] <span class="bu">Dates</span> v1<span class="fl">.11.0</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  [de0858da] <span class="bu">Printf</span> v1<span class="fl">.11.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -307,8 +323,8 @@ Julia version and machine information
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Julia Version <span class="fl">1.12.1</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Commit ba1e628ee49 (<span class="fl">2025</span><span class="op">-</span><span class="fl">10</span><span class="op">-</span><span class="fl">17</span> <span class="fl">13</span><span class="op">:</span><span class="fl">02</span> UTC)</span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Julia Version <span class="fl">1.12.2</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Commit ca9b6662be4 (<span class="fl">2025</span><span class="op">-</span><span class="fl">11</span><span class="op">-</span><span class="fl">20</span> <span class="fl">16</span><span class="op">:</span><span class="fl">25</span> UTC)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Build Info<span class="op">:</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  Official https<span class="op">://</span>julialang.org release</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Platform Info<span class="op">:</span></span>

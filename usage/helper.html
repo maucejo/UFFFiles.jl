@@ -198,9 +198,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#dataset-type" id="toc-dataset-type" class="nav-link active" data-scroll-target="#dataset-type"><span class="header-section-number">1</span> Dataset Type</a></li>
   <li><a href="#supported-datasets" id="toc-supported-datasets" class="nav-link" data-scroll-target="#supported-datasets"><span class="header-section-number">2</span> Supported Datasets</a></li>
-  <li><a href="#connectivity-matrix" id="toc-connectivity-matrix" class="nav-link" data-scroll-target="#connectivity-matrix"><span class="header-section-number">3</span> Connectivity Matrix</a></li>
-  <li><a href="#dataset-55-to-matrix" id="toc-dataset-55-to-matrix" class="nav-link" data-scroll-target="#dataset-55-to-matrix"><span class="header-section-number">4</span> Dataset 55 to matrix</a></li>
-  <li><a href="#dataset-58-to-matrix" id="toc-dataset-58-to-matrix" class="nav-link" data-scroll-target="#dataset-58-to-matrix"><span class="header-section-number">5</span> Dataset 58 to matrix</a></li>
+  <li><a href="#supported-file-extensions" id="toc-supported-file-extensions" class="nav-link" data-scroll-target="#supported-file-extensions"><span class="header-section-number">3</span> Supported file extensions</a></li>
+  <li><a href="#srdc-documentation" id="toc-srdc-documentation" class="nav-link" data-scroll-target="#srdc-documentation"><span class="header-section-number">4</span> SRDC Documentation</a></li>
+  <li><a href="#connectivity-matrix" id="toc-connectivity-matrix" class="nav-link" data-scroll-target="#connectivity-matrix"><span class="header-section-number">5</span> Connectivity Matrix</a></li>
+  <li><a href="#dataset-55-to-matrix" id="toc-dataset-55-to-matrix" class="nav-link" data-scroll-target="#dataset-55-to-matrix"><span class="header-section-number">6</span> Dataset 55 to matrix</a></li>
+  <li><a href="#dataset-58-to-matrix" id="toc-dataset-58-to-matrix" class="nav-link" data-scroll-target="#dataset-58-to-matrix"><span class="header-section-number">7</span> Dataset 58 to matrix</a></li>
   </ul>
 </nav>
     </div>
@@ -277,10 +279,56 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>valid_datasets <span class="op">=</span> <span class="fu">supported_datasets</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="connectivity-matrix" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="connectivity-matrix"><span class="header-section-number">3</span> Connectivity Matrix</h2>
+<section id="supported-file-extensions" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="supported-file-extensions"><span class="header-section-number">3</span> Supported file extensions</h2>
 <div class="api">
 <div id="8" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown"><pre><code class="language-julia">supported_file_extensions()</code></pre>
+<p>Returns a vector of supported UFF file extensions.</p>
+
+
+</div>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>valid_file_extensions <span class="op">=</span> <span class="fu">supported_file_extensions</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="srdc-documentation" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="srdc-documentation"><span class="header-section-number">4</span> SRDC Documentation</h2>
+<p>This function provides an easy access to the documentation for Universal File datasets that were originally developed by the Structural Dynamics Research Corporation (SDRC) in the late 1960s and early 1970s.</p>
+<div class="api">
+<div id="10" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown"><pre><code class="language-julia">srdc_doc(data::UFFDataset)</code></pre>
+<p>Displays the documentation developed by the SRDC (Structural Dynamics Research Corporation) for a given dataset type.</p>
+<p><strong>Input</strong></p>
+<ul>
+<li><p><code>data::UFFDataset</code>: An instance of a UFF dataset type (e.g., Dataset15, Dataset18, etc.).</p>
+</li>
+</ul>
+<p><strong>Output</strong></p>
+<ul>
+<li><p>Displays the documentation for the SRDC of the specified dataset type.</p>
+</li>
+</ul>
+
+
+</div>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the documentation for Dataset 15</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">srdc_doc</span>(<span class="fu">Dataser15</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="connectivity-matrix" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="connectivity-matrix"><span class="header-section-number">5</span> Connectivity Matrix</h2>
+<div class="api">
+<div id="12" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
 <div class="markdown"><pre><code class="language-julia">connectivity_matrix(dataset::Dataset2412)</code></pre>
 <p>Returns the connectivity matrix for a Dataset2412 object, where each row corresponds to an element and each column corresponds to a node. Missing values are filled with <code>-1</code>.</p>
@@ -300,16 +348,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># readuff returns a vector of datasets</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>data2412 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file2412.uff"</span>)[<span class="fl">1</span>]</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>connectivity <span class="op">=</span> <span class="fu">connectivity_matrix</span>(data2412)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># readuff returns a vector of datasets</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>data2412 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file2412.uff"</span>)[<span class="fl">1</span>]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>connectivity <span class="op">=</span> <span class="fu">connectivity_matrix</span>(data2412)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="dataset-55-to-matrix" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="dataset-55-to-matrix"><span class="header-section-number">4</span> Dataset 55 to matrix</h2>
+<section id="dataset-55-to-matrix" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="dataset-55-to-matrix"><span class="header-section-number">6</span> Dataset 55 to matrix</h2>
 <div class="api">
-<div id="10" class="cell" data-execution_count="1">
+<div id="14" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
 <div class="markdown"><pre><code class="language-julia">dataset55_to_mat(dataset::Vector{Dataset55})</code></pre>
 <p>Converts a vector of Dataset55 objects into a matrix of data values and a vector of corresponding x-values based on the analysis type.</p>
@@ -338,18 +386,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's assume you have read a UFF file containing dataset 55 only</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>data55 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file55.uff"</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset 55 to a matrix</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>matrix55, x <span class="op">=</span> <span class="fu">dataset55_to_mat</span>(data55)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's assume you have read a UFF file containing dataset 55 only</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>data55 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file55.uff"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset 55 to a matrix</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>matrix55, x <span class="op">=</span> <span class="fu">dataset55_to_mat</span>(data55)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="dataset-58-to-matrix" class="level2" data-number="5">
-<h2 data-number="5" class="anchored" data-anchor-id="dataset-58-to-matrix"><span class="header-section-number">5</span> Dataset 58 to matrix</h2>
+<section id="dataset-58-to-matrix" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="dataset-58-to-matrix"><span class="header-section-number">7</span> Dataset 58 to matrix</h2>
 <div class="api">
-<div id="12" class="cell" data-execution_count="1">
+<div id="16" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
 <div class="markdown"><pre><code class="language-julia">dataset58_to_mat(dataset::Vector{Dataset58})</code></pre>
 <p>Converts a vector of Dataset58 objects into a matrix of data values and a vector of corresponding x-values based on the dataset parameters.</p>
@@ -378,13 +426,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's assume you have read a UFF file containing dataset 58 only</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>data58 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file58.uff"</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset 58 to a matrix</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>matrix58, x <span class="op">=</span> <span class="fu">dataset58_to_matrix</span>(data58)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's assume you have read a UFF file containing dataset 58 only</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>data58 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file58.uff"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset 58 to a matrix</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>matrix58, x <span class="op">=</span> <span class="fu">dataset58_to_matrix</span>(data58)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>

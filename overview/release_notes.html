@@ -164,7 +164,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#v0.3.0" id="toc-v0.3.0" class="nav-link active" data-scroll-target="#v0.3.0">v0.3.0</a></li>
+  <li><a href="#v1.0.0" id="toc-v1.0.0" class="nav-link active" data-scroll-target="#v1.0.0">v1.0.0</a></li>
   <li><a href="#v0.2.1" id="toc-v0.2.1" class="nav-link" data-scroll-target="#v0.2.1">v0.2.1</a></li>
   <li><a href="#v0.2.0" id="toc-v0.2.0" class="nav-link" data-scroll-target="#v0.2.0">v0.2.0</a></li>
   <li><a href="#v0.1.0" id="toc-v0.1.0" class="nav-link" data-scroll-target="#v0.1.0">v0.1.0</a></li>
@@ -193,11 +193,21 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="v0.3.0" class="level2">
-<h2 class="anchored" data-anchor-id="v0.3.0">v0.3.0</h2>
+<section id="v1.0.0" class="level2">
+<h2 class="anchored" data-anchor-id="v1.0.0">v1.0.0</h2>
 <p><strong>Breaking changes</strong></p>
 <ul>
-<li><code>conversion_factors</code> field in <code>Dataset164</code> struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to <a href="https://github.com/Spectrum-Tec"><span class="citation" data-cites="JakeZw">@JakeZw</span></a> for submitting the PR.</li>
+<li><p>Refactoring of the code to reduce the memory footprint when parsing UFF files.</p></li>
+<li><p>Add <code>supported_file_extensions</code> function to list supported UFF file extensions.</p></li>
+<li><p>Add <code>srdc_doc</code> function to access to the original documentation for supported datasets.</p></li>
+<li><p><code>readuff</code> and <code>writeuff</code> functions now check the file extension and throw an error if it is not supported.</p></li>
+<li><p>Datasets</p>
+<ul>
+<li><p>Add <code>Dataset1858</code>. Thanks to <a href="https://github.com/Spectrum-Tec"><span class="citation" data-cites="JakeZw">@JakeZw</span></a> for submitting the PR.</p></li>
+<li><p><code>readuff</code> and <code>writeuff</code> now can now read and write binary <code>Dataset58</code>. Thanks to <a href="https://github.com/Spectrum-Tec"><span class="citation" data-cites="JakeZw">@JakeZw</span></a> for submitting the PR.</p></li>
+<li><p><code>conversion_factors</code> field in <code>Dataset164</code> struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to <a href="https://github.com/Spectrum-Tec"><span class="citation" data-cites="JakeZw">@JakeZw</span></a> for submitting the PR.</p></li>
+<li><p><code>node_coords</code> field in <code>Dataset15</code> struct has been changed from <code>Vector{Vector{Float64}}</code> to <code>Matrix{Float64}</code> for easier manipulation of node coordinates and consistency with <code>Dataset2411</code>.</p></li>
+</ul></li>
 </ul>
 </section>
 <section id="v0.2.1" class="level2">
