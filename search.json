@@ -92,7 +92,7 @@
     "href": "index.html#reproducibility",
     "title": "UFFFiles.jl",
     "section": "Reproducibility",
-    "text": "Reproducibility\n\n\n\n\n\n\nProject direct dependencies\n\n\n\n\n\nUFFFiles.jl has the following direct dependencies.\nProject UFFFiles v1.0.0\nStatus\n  [6ef1bc8b] Scanf v0.5.4\n  [ade2ca70] Dates v1.11.0\n  [de0858da] Printf v1.11.0\n\n\n\n\n\n\n\n\n\nJulia version and machine information\n\n\n\n\n\nJulia Version 1.12.2\nCommit ca9b6662be4 (2025-11-20 16:25 UTC)\nBuild Info:\n  Official https://julialang.org release\nPlatform Info:\n  OS: macOS (arm64-apple-darwin24.0.0)\n  CPU: 16 × Apple M4 Max\n  WORD_SIZE: 64\n  LLVM: libLLVM-18.1.7 (ORCJIT, apple-m4)\n  GC: Built with stock GC\nThreads: 1 default, 1 interactive, 1 GC (on 12 virtual cores)\nEnvironment:\n  JULIA_EDITOR = code\n  JULIA_VSCODE_REPL = 1\n  JULIA_PKG_SERVER = https://juliahub.com",
+    "text": "Reproducibility\n\n\n\n\n\n\nProject direct dependencies\n\n\n\n\n\nUFFFiles.jl has the following direct dependencies.\nProject UFFFiles v1.0.1\nStatus\n  [6ef1bc8b] Scanf v0.5.4\n  [ade2ca70] Dates v1.11.0\n  [de0858da] Printf v1.11.0\n\n\n\n\n\n\n\n\n\nJulia version and machine information\n\n\n\n\n\nJulia Version 1.12.2\nCommit ca9b6662be4 (2025-11-20 16:25 UTC)\nBuild Info:\n  Official https://julialang.org release\nPlatform Info:\n  OS: macOS (arm64-apple-darwin24.0.0)\n  CPU: 16 × Apple M4 Max\n  WORD_SIZE: 64\n  LLVM: libLLVM-18.1.7 (ORCJIT, apple-m4)\n  GC: Built with stock GC\nThreads: 1 default, 1 interactive, 1 GC (on 12 virtual cores)\nEnvironment:\n  JULIA_EDITOR = code\n  JULIA_VSCODE_REPL = 1\n  JULIA_PKG_SERVER = https://juliahub.com",
     "crumbs": [
       "Overview",
       "UFFFiles.jl"
@@ -576,7 +576,18 @@
     "href": "overview/release_notes.html",
     "title": "Release Notes",
     "section": "",
-    "text": "Breaking changes\n\nRefactoring of the code to reduce the memory footprint when parsing UFF files.\nAdd supported_file_extensions function to list supported UFF file extensions.\nAdd srdc_doc function to access to the original documentation for supported datasets.\nreaduff and writeuff functions now check the file extension and throw an error if it is not supported.\nDatasets\n\nAdd Dataset1858. Thanks to @JakeZw for submitting the PR.\nreaduff and writeuff now can now read and write binary Dataset58. Thanks to @JakeZw for submitting the PR.\nconversion_factors field in Dataset164 struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to @JakeZw for submitting the PR.\nnode_coords field in Dataset15 struct has been changed from Vector{Vector{Float64}} to Matrix{Float64} for easier manipulation of node coordinates and consistency with Dataset2411.",
+    "text": "Minor changes to the internals to avoid errors when reading files.",
+    "crumbs": [
+      "Overview",
+      "Release Notes"
+    ]
+  },
+  {
+    "objectID": "overview/release_notes.html#v1.0.1",
+    "href": "overview/release_notes.html#v1.0.1",
+    "title": "Release Notes",
+    "section": "",
+    "text": "Minor changes to the internals to avoid errors when reading files.",
     "crumbs": [
       "Overview",
       "Release Notes"
@@ -586,8 +597,8 @@
     "objectID": "overview/release_notes.html#v1.0.0",
     "href": "overview/release_notes.html#v1.0.0",
     "title": "Release Notes",
-    "section": "",
-    "text": "Breaking changes\n\nRefactoring of the code to reduce the memory footprint when parsing UFF files.\nAdd supported_file_extensions function to list supported UFF file extensions.\nAdd srdc_doc function to access to the original documentation for supported datasets.\nreaduff and writeuff functions now check the file extension and throw an error if it is not supported.\nDatasets\n\nAdd Dataset1858. Thanks to @JakeZw for submitting the PR.\nreaduff and writeuff now can now read and write binary Dataset58. Thanks to @JakeZw for submitting the PR.\nconversion_factors field in Dataset164 struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to @JakeZw for submitting the PR.\nnode_coords field in Dataset15 struct has been changed from Vector{Vector{Float64}} to Matrix{Float64} for easier manipulation of node coordinates and consistency with Dataset2411.",
+    "section": "v1.0.0",
+    "text": "v1.0.0\nBreaking changes\n\nRefactoring of the code to reduce the memory footprint when parsing UFF files.\nAdd supported_file_extensions function to list supported UFF file extensions.\nAdd srdc_doc function to access to the original documentation for supported datasets.\nreaduff and writeuff functions now check the file extension and throw an error if it is not supported.\nDatasets\n\nAdd Dataset1858. Thanks to @JakeZw for submitting the PR.\nreaduff and writeuff now can now read and write binary Dataset58. Thanks to @JakeZw for submitting the PR.\nconversion_factors field in Dataset164 struct has been modified in favor of individual names for scaling factors. This change improves fields clarity. Thanks to @JakeZw for submitting the PR.\nnode_coords field in Dataset15 struct has been changed from Vector{Vector{Float64}} to Matrix{Float64} for easier manipulation of node coordinates and consistency with Dataset2411.",
     "crumbs": [
       "Overview",
       "Release Notes"
