@@ -54,7 +54,7 @@ function parse_dataset15(io)
     color = Int[]
     node_coords = Vector{Float64}[]
 
-    while  (r1 = readline(io)) != "    -1"
+    while  (r1 = readline(io))[1:6] != "    -1"
         nid, dcs, disp_cs, col, x, y, z = @scanf(r1, "%10d%10d%10d%10d%13e%13e%13e", Int, Int, Int, Int, Float64, Float64, Float64)[2:end]
 
         push!(node_ID, nid)

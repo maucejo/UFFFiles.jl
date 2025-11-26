@@ -102,10 +102,10 @@ function parse_dataset58b(io)
         Int, Char, Int, Int, Int, Int, Int, Int, Int, Int)[3:end]
 
     # Need to implement proper error handling
-    type == 'b' || error("Expected UFF58 binary file but type is $type")
-    endian == 1 || println("Only implemented for Little Endian")
-    floating_point_format == 2 || println("Only implemented for IEEE 754")
-    num_ascii_lines == 11 || println("Header not correct")
+    type == 'b' || throw(ArgumentError("Expected UFF58 binary file but type is $type"))
+    endian == 1 || throw(ArgumentError("Only implemented for Little Endian"))
+    floating_point_format == 2 || throw(ArgumentError("Only implemented for Little Endian"))
+    num_ascii_lines == 11 || throw(ArgumentError("Header not correct number of lines"))
 
     id1 = strip(readline(io))
     id2 = strip(readline(io))

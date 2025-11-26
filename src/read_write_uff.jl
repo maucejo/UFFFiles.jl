@@ -11,7 +11,7 @@ Reads a UFF (Universal File Format) file and parses its contents into a vector o
 """
 function readuff(filename::String)
 
-    file_extension = split(filename, ".")[end]
+    file_extension = splitext(filename)[end]
     if !(file_extension in supported_file_extensions())
         throw(ArgumentError("File extension .$file_extension may not be supported for UFF files."))
     end
@@ -64,7 +64,7 @@ Writes a vector of UFFDataset objects to a UFF file.
 - `w58b::Bool`: Optional flag to indicate if Dataset58 format must be written in binary format (default: false).
 """
 function writeuff(filename::String, datasets; w58b::Bool = false)
-    file_extension = split(filename, ".")[end]
+    file_extension = splitext(filename)[end]
     if !(file_extension in supported_file_extensions())
         throw(ArgumentError("File extension .$file_extension may not be supported for UFF files."))
     end

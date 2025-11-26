@@ -57,7 +57,7 @@ function parse_dataset2411(io)
     color = similar(nodes_ID)
     node_coords = Vector{Float64}[]
 
-    while (r1 = readline(io)) != "    -1"
+    while (r1 = readline(io))[1:6] != "    -1"
         # Record 1: 4I10
         nid, cs, dcs, col = @scanf(r1, "%10d%10d%10d%10d", Int, Int, Int, Int)[2:end]
         push!(nodes_ID, nid)

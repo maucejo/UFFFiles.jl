@@ -249,7 +249,7 @@ function parse_dataset2412(io)
 
     # reset(io)
     # block = String[]
-    # while (line = readline(io)) != "    -1"
+    # while (line = readline(io))[1:6] != "    -1"
     #     push!(block, line)
     # end
 
@@ -266,7 +266,7 @@ function parse_dataset2412(io)
     # nlines = length(block)
     nodes_elt = Int[]
     # while i ≤ nlines
-    while (r1 = readline(io)) != "    -1"
+    while (r1 = readline(io))[1:6] != "    -1"
         # Record 1 - (6I10)
         elt, fed, pprop, mprop, col, nnode = @scanf(r1, "%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int)[2:end]
         # elt, fed, pprop, mprop, col, nnode = parse.(Int, split(block[i]))

@@ -70,7 +70,7 @@ function parse_dataset82(io)
 
     # Record 3 - FORMAT(8I10)
     line_nodes = Int[]
-    while (line = readline(io)) != "    -1"
+    while (line = readline(io))[1:6] != "    -1"
         append!(line_nodes, parse.(Int, split(line)))
     end
 

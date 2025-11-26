@@ -854,7 +854,7 @@ function parse_dataset2414(io)
     data_exp = 1
     total_vals = ndv
     _values = similar(eltype(data_value_raw), 0)
-    while  (r14 = readline(io)) != "    -1"
+    while  (r14 = readline(io))[1:6] != "    -1"
         # Record 14
         push!(data_info_raw, parse.(Int, split(strip(r14))))
 

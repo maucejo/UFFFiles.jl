@@ -81,7 +81,7 @@ function parse_dataset18(io)
     cs_x = Vector{Float64}[]
     cs_xz = Vector{Float64}[]
 
-    while  (line = readline(io)) != "    -1"
+    while  (line = readline(io))[1:6] != "    -1"
         # Record 1 - FORMAT(5I10)
         csn, cst, ref_csn, col, md = @scanf(line, "%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int)[2:end]
         # csn, cst, ref_csn, col, md = parse.(Int, split(line))
