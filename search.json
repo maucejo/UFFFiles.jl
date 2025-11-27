@@ -499,7 +499,7 @@
     "href": "usage/helper.html#dataset-type",
     "title": "Helper functions",
     "section": "1 Dataset Type",
-    "text": "1 Dataset Type\n\n\n\ndataset_type(data::UFFDataset)\nReturns the dataset type presents in a UFFDataset object.\nInput\n\ndata::UFFDataset: The UFFDataset object to extract types from.\n\n\nOutput\n\nSymbol: A vector containing the dataset types.\n\n\n\n\n\n\n\n\nusing UFFFiles\n\n# Only one dataset is read\ndata = readuff(\"path/to/your/file.uff\")[1]\ndtype = dataset_types(data)\n\n# Several datasets are read\ndata_all = readuff(\"path/to/your/file.uff\")\ndtypes = dataset_types.(data_all)",
+    "text": "1 Dataset Type\n\n\n\ndataset_type(data::UFFDataset)\nReturns the dataset type presents in a UFFDataset object.\nInput\n\ndata::UFFDataset: The UFFDataset object to extract types from.\n\n\nOutput\n\nSymbol: A vector containing the dataset types.\n\n\n\n\n\n\n\n\nusing UFFFiles\n\n# Only one dataset is read\ndata = readuff(\"path/to/your/file.uff\")[1]\ndtype = dataset_type(data)\n\n# Several datasets are read\ndata_all = readuff(\"path/to/your/file.uff\")\ndtypes = dataset_type.(data_all)",
     "crumbs": [
       "Usage",
       "Helper functions"
