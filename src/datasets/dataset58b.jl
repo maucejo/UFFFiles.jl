@@ -124,6 +124,8 @@ function parse_dataset58b(io)
     response_entity, response_node, response_direction, _,
     reference_entity, reference_node,  reference_direction =
         @scanf(r6, "%5i%10i%5i%10i%c%10c%10i%4i%c%10c%10i%4i", Int, Int, Int, Int, Char, String, Int, Int, Char, String, Int, Int)[2:end]
+    response_entity = strip(response_entity)
+    reference_entity = strip(reference_entity)
 
     # Record 7
     r7 = readline(io)
@@ -133,23 +135,31 @@ function parse_dataset58b(io)
     r8 = readline(io)
     abs_spec_dtype, abs_len_unit_exp, abs_force_unit_exp, abs_temp_unit_exp, _, abs_axis_label, _, abs_axis_unit_label =
         @scanf(r8, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)[2:end]
+        abs_axis_label = strip(abs_axis_label)
+        abs_axis_unit_label = strip(abs_axis_unit_label)
 
     # Record 9
     r9 = readline(io)
     ord_spec_dtype, ord_len_unit_exp, ord_force_unit_exp, ord_temp_unit_exp, _, ord_axis_label, _, ord_axis_unit_label =
         @scanf(r9, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)[2:end]
+        ord_axis_label = strip(ord_axis_label)
+        ord_axis_unit_label = strip(ord_axis_unit_label)
 
     # Record 10
     r10 = readline(io)
     ord_denom_spec_dtype, ord_denom_len_unit_exp, ord_denom_force_unit_exp, ord_denom_temp_unit_exp, _, ord_denom_axis_label, _, ord_denom_axis_unit_label =
         @scanf(r10, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)[2:end]
+        ord_denom_axis_label = strip(ord_denom_axis_label)
+        ord_denom_axis_unit_label = strip(ord_denom_axis_unit_label)
 
     # Record 11
     r11 = readline(io)
     z_spec_dtype, z_len_unit_exp, z_force_unit_exp, z_temp_unit_exp, _, z_axis_label, _, z_axis_unit_label =
         @scanf(r11, "%10i%5i%5i%5i%c%20c%c%20c", Int, Int, Int, Int, Char, String, Char, String)[2:end]
+    z_axis_label = strip(z_axis_label)
+    z_axis_unit_label = strip(z_axis_unit_label)
 
-    # Record 12
+    # Binary Data
     _data = read(io, binary_bytes)
 
     # Convert UInt8 to Values

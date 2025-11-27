@@ -247,12 +247,6 @@ Universal Dataset Number: 2412
 """
 function parse_dataset2412(io)
 
-    # reset(io)
-    # block = String[]
-    # while (line = readline(io))[1:6] != "    -1"
-    #     push!(block, line)
-    # end
-
     elements_ID = Int[]
     fe_descriptor_id = Int[]
     phys_property = Int[]
@@ -262,11 +256,8 @@ function parse_dataset2412(io)
     connectivity = Vector{Int}[]
     beam_info = Vector{Int}[]
 
-    # i = 2  # Start reading from line 2 (after dataset type)
-    # nlines = length(block)
     nodes_elt = Int[]
-    # while i ≤ nlines
-    while (r1 = readline(io))[1:6] != "    -1"
+    while (r1 = rstrip(readline(io))) != "    -1"
         # Record 1 - (6I10)
         elt, fed, pprop, mprop, col, nnode = @scanf(r1, "%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int)[2:end]
         # elt, fed, pprop, mprop, col, nnode = parse.(Int, split(block[i]))
@@ -282,13 +273,11 @@ function parse_dataset2412(io)
             r2 = readline(io)
             beam_orient, cross_sec_fore, cross_sec_aft = @scanf(r2, "%10d%10d%10d", Int, Int, Int)[2:end]
             push!(beam_info, [beam_orient, cross_sec_fore, cross_sec_aft])
-            # push!(beam_info, parse.(Int, split(block[i])))
-
+          
             # Read Record 3 (connectivity) - FORMAT(8I10)
             r3 = readline(io)
             nodes = @scanf(r3, "%10d%10d%10d%10d%10d%10d%10d%10d", Int, Int, Int, Int, Int, Int, Int, Int)[2:end]
             push!(connectivity, [nodes[1:nnode]...])
-            # push!(connectivity, parse.(Int, split(block[i])))
         else  # Non-beam elements - FORMAT (8I10)
             # Record 2 (connectivity)
             npe = 0
@@ -304,7 +293,6 @@ function parse_dataset2412(io)
             empty!(nodes_elt)
         end
 
-        # i += 1
     end
 
     return Dataset2412(

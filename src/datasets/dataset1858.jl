@@ -211,6 +211,8 @@ function parse_dataset1858(io)
     # Record 6 - FORMAT (2A2,2X,2A2)
     r6 = readline(io)
     resp_dir, _, ref_dir = @scanf(r6, "%4c%2c%4c", String, String, String)[2:end]
+    resp_dir = strip(resp_dir)
+    ref_dir = strip(ref_dir)
 
     # Record 7 Unused
     readline(io)
@@ -240,8 +242,8 @@ function parse_dataset1858(io)
         uv3,
         uv4,
         exp_window_damping,
-        strip(resp_dir),
-        strip(ref_dir)
+        resp_dir,
+        ref_dir
     )
 end
 
