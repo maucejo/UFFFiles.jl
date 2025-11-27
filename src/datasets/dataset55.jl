@@ -462,7 +462,7 @@ function parse_dataset55(io)
 
      # Start parsing from Record 9 and 10
      _data = similar(eltype(data), 0)
-     while (r9 = readline(io))[1:6] != "    -1"
+     while (r9 = rstrip(readline(io))) != "    -1"
           # Record 9 - Format (I10)
           push!(node_number, parse(Int, strip(r9)))
 
