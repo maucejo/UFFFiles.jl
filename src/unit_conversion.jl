@@ -26,14 +26,14 @@ end
 
 function convert_to_si!(ds::Dataset15, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
 
-    ds.node_coords .*= conversion_length
+    ds.node_coords ./= conversion_length
 end
 
 function convert_to_si!(ds::Dataset18, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
 
-    ds.cs_origin .*= conversion_length
-    ds.cs_x .*= conversion_length
-    ds.cs_xz .*= conversion_length
+    ds.cs_origin ./= conversion_length
+    ds.cs_x ./= conversion_length
+    ds.cs_xz ./= conversion_length
 end
 
 
@@ -45,6 +45,47 @@ end
 function convert_to_si!(ds::Dataset151, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
 
     return nothing
+end
+
+function convert_to_si!(ds::Dataset58, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+
+    # Convert data vector
+    # Implemented for ordinate data types 8, 11, 12, 9, 13, 15
+
+    # z-axis unit conversion not implemented
+    # if abscissa has odd units then complain
+    if any(ds.abs_spec_dtype .== (2, 3, 5, 6, 8, 9, 11, 12, 13, 15, 16))
+        @warn "Unit Conversion not implemented for abscissa"
+    end
+
+    factor = 1.
+    # Ordinate Numerator
+    if any(ds.ord_spec_dtype .== (0, 1))
+        factor /= 1.
+    elseif any(ds.ord_spec_dtype .== (8, 11, 12))
+        factor /= conversion_length
+    elseif any(ds.ord_spec_dtype .== (9, 13))
+        factor /= conversion_force
+    elseif any(ds.ord_spec_dtype .== (15))
+        factor /= (conversion_force/conversion_length^2)
+    else
+        @warn "Conversion factor for $(ds.ord_spec_dtype) not implemented, please submit PR"
+    end
+
+    # Ordinate Denominator
+    if any(ds.ord_denom_spec_dtype .== (0, 1))
+        factor /= 1.
+    elseif any(ds.ord_denom_spec_dtype .== (8, 11, 12))
+        factor /= conversion_length
+    elseif any(ds.ord_denom_spec_dtype .== (9, 13))
+        factor /= conversion_force
+    elseif any(ds.ord_denom_spec_dtype .== (15))
+        factor /= (conversion_force/conversion_length^2)
+    else
+        @warn "Conversion factor for $(ds.ord_denom_spec_dtype) not implemented, please submit PR"
+    end
+
+    ds.data .*= factor
 end
 
 function convert_to_si!(ds::Dataset164, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)

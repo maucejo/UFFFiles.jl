@@ -13,8 +13,8 @@ module UFFFiles
     export readuff, writeuff
 
     # Helper functions
-    export connectivity_matrix, convert_to_si!, dataset55_to_mat,
-           dataset58_to_mat, srdc_doc, supported_datasets, supported_file_extensions
+    export connectivity_matrix, convert_to_si!, dataset_type, collect_to_mat,
+           srdc_doc, supported_datasets, supported_file_extensions
 
     # Include files
     include("uff_utils.jl")

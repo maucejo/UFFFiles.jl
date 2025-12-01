@@ -63,12 +63,13 @@ function connectivity_matrix(dataset::Dataset2412)
 end
 
 """
-    dataset55_to_mat(dataset::Vector{Dataset55})
+    collect_to_mat(dataset::Vector{Dataset55})
+    collect_to_mat(dataset::Vector{Dataset58})
 
 Converts a vector of Dataset55 objects into a matrix of data values and a vector of corresponding x-values based on the analysis type.
 
 **Input**
-- `dataset::Vector{Dataset55}`: A vector of Dataset55 objects to be converted
+- `dataset::Vector{Dataset55}` or `dataset::Vector{Dataset58}`: A vector of Dataset55 or Dataset58 objects to be converted
 
 **Outputs**
 - `mat::VecOrMat{dtype}`: A matrix where each column corresponds to a dataset's data values.
@@ -78,6 +79,18 @@ Converts a vector of Dataset55 objects into a matrix of data values and a vector
 - `dtype` and `xtype` depend on the dataset's `dtype` and `analysis_type` respectively.
 - It is assumed that all datasets in the input vector have the same number of data points and analysis type.
 """
+function collect_to_mat(dataset)
+    dtype = dataset_type.(dataset)
+
+    if all(dtype .== :Dataset55)
+        return dataset55_to_mat(dataset)
+    elseif all(dtype .== :Dataset58)
+        return dataset58_to_mat(dataset)
+    else
+        throw(ArgumentError("collect_to_mat only supports Dataset55 and Dataset58 types."))
+    end
+end
+
 function dataset55_to_mat(dataset)
     # Convert Dataset55 to Matrix
     ndatasets = length(dataset)
