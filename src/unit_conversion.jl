@@ -15,10 +15,11 @@ Converts the units of the given UFF dataset `ds` to SI units in place.
 **Output**
 - `ds`: Dataset with its data converted to SI units.
 """
-function convert_to_si!(ds)
+function convert_to_si!(datasets)
     ds164 = Dataset164(1,"SI", 2, 1.0, 1.0, 1.0, 273.15)
-
-    convert_to_si!(ds, ds164)
+    for ds in datasets
+        ds164 = convert_to_si!(ds, ds164)
+    end
 end
 
 function convert_to_si!(ds::Dataset15, ds164)
