@@ -21,33 +21,35 @@ function convert_to_si!(ds, ds164)
     conversion_temperature = ds164.conversion_temperature
     temperature_offset = ds164.temperature_offset
 
-    convert_to_si!(ds, conversion_length, conversion_force, conversion_temperature, temperature_offset)
+    convert_to_si!(ds, ds164)
 end
 
-function convert_to_si!(ds::Dataset15, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset15, ds164)
 
-    ds.node_coords ./= conversion_length
+    ds.node_coords ./= ds164.conversion_length
+    return ds164
 end
 
-function convert_to_si!(ds::Dataset18, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset18, ds164)
 
-    ds.cs_origin ./= conversion_length
-    ds.cs_x ./= conversion_length
-    ds.cs_xz ./= conversion_length
+    ds.cs_origin ./= ds164.conversion_length
+    ds.cs_x ./= ds164.conversion_length
+    ds.cs_xz ./= ds164.conversion_length
+    return ds164
 end
 
 
-function convert_to_si!(ds::Dataset82, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset82, ds164)
 
-    return nothing
+    return ds164
 end
 
-function convert_to_si!(ds::Dataset151, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset151, ds164)
 
-    return nothing
+    return ds164
 end
 
-function convert_to_si!(ds::Dataset58, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset58, ds164)
 
     # Convert data vector
     # Implemented for ordinate data types 8, 11, 12, 9, 13, 15
@@ -63,11 +65,11 @@ function convert_to_si!(ds::Dataset58, conversion_length = 1., conversion_force 
     if any(ds.ord_spec_dtype .== (0, 1))
         factor /= 1.
     elseif any(ds.ord_spec_dtype .== (8, 11, 12))
-        factor /= conversion_length
+        factor /= ds164.conversion_length
     elseif any(ds.ord_spec_dtype .== (9, 13))
-        factor /= conversion_force
+        factor /= ds164.conversion_force
     elseif any(ds.ord_spec_dtype .== (15))
-        factor /= (conversion_force/conversion_length^2)
+        factor /= (ds164.conversion_force/ds164.conversion_length^2)
     else
         @warn "Conversion factor for $(ds.ord_spec_dtype) not implemented, please submit PR"
     end
@@ -76,40 +78,41 @@ function convert_to_si!(ds::Dataset58, conversion_length = 1., conversion_force 
     if any(ds.ord_denom_spec_dtype .== (0, 1))
         factor *= 1.
     elseif any(ds.ord_denom_spec_dtype .== (8, 11, 12))
-        factor *= conversion_length
+        factor *= ds164.conversion_length
     elseif any(ds.ord_denom_spec_dtype .== (9, 13))
-        factor *= conversion_force
+        factor *= ds164.conversion_force
     elseif any(ds.ord_denom_spec_dtype .== (15))
-        factor *= (conversion_force/conversion_length^2)
+        factor *= (ds164.conversion_force/ds164.conversion_length^2)
     else
         @warn "Conversion factor for $(ds.ord_denom_spec_dtype) not implemented, please submit PR"
     end
 
     ds.data .*= factor
+    return ds164
 end
 
-function convert_to_si!(ds::Dataset164, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset164, ds164)
 
-    return nothing
+    return ds
 end
 
-function convert_to_si!(ds::Dataset1858, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset1858, ds164)
 
-    return nothing
+    return ds164
 end
 
-function convert_to_si!(ds::Dataset2411, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset2411, ds164)
 
     ds.node_coords ./= conversion_length
 end
 
-function convert_to_si!(ds::Dataset2412, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset2412, ds164)
 
-    return nothing
+    return ds164
 end
 
-function convert_to_si!(ds::Dataset2414, conversion_length = 1., conversion_force = 1., conversion_temperature = 1., temperature_offset = 0.)
+function convert_to_si!(ds::Dataset2414, ds164)
 
     # To Do
-    return nothing
+    return ds164
 end
