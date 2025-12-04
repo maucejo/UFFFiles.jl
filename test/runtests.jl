@@ -302,7 +302,7 @@ end
 
         # a single test there are many more cases
         @test ds55data ≈ dss[4].data
-        
+
         ds58data = 0.0254/4.4482216152605 .* ds[3].data
         @test ds58data ≈ dss[3].data
 end

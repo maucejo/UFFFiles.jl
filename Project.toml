@@ -1,6 +1,6 @@
 name = "UFFFiles"
 uuid = "20c5726e-8372-4c34-be2c-190a5a70d483"
-version = "1.0.2"
+version = "1.1.0"
 authors = ["Mathieu Aucejo <79322171+maucejo@users.noreply.github.com> and contributors"]
 
 [deps]
