@@ -11,7 +11,7 @@ A Julia package for reading and writing Universal File Format (UFF) files, commo
 > [Notes]
 > The basic read and write functionality has been tested.
 >
-> Unit conversions are being done on an as needed basis, please submit a PR for your particular needs.
+> Unit conversions are being done on an as needed basis, please submit a PR (with tests) for your particular needs.
 
 ## Installation
 
