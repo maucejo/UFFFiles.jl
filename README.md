@@ -6,10 +6,10 @@
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 [![DispatchDoctor](https://img.shields.io/badge/%F0%9F%A9%BA_tested_with-DispatchDoctor.jl-blue?labelColor=white)](https://github.com/MilesCranmer/DispatchDoctor.jl)
 
-A Julia package for reading (and writing in the future) Universal File Format (UFF) files, commonly used in engineering applications.
+A Julia package for reading and writing Universal File Format (UFF) files, commonly used in engineering applications.
 
 > [!WARNING]
-> The package is under active development and is developed as part of my research activities.
+> The package is under active development.
 
 ## Installation
 

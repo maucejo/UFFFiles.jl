@@ -20,7 +20,7 @@ format:
 `UFFFiles.jl` is a Julia package for reading and writing Universal File Format (UFF) files, commonly used in engineering applications.
 
 ::: {.callout-warning}
-The package is under active development and is developed as part of my research activities.
+The package is under active development.
 :::
 
 ## Supported formats
