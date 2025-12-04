@@ -8,18 +8,22 @@
 
 A Julia package for reading and writing Universal File Format (UFF) files, commonly used in engineering applications.
 
-> [!WARNING]
-> The package is under active development.
+> [Notes]
+> The basic read and write functionality has been tested.
+>
+> Unit conversions are being done on an as needed basis, please submit a PR (with tests) for your particular needs.
 
 ## Installation
 
 Install `UFFFiles.jl` via Julia's package manager:
+
 ```julia
 import Pkg
 Pkg.add("UFFFiles")
 ```
 
 or
+
 ```julia
 (Yourenv) pkg> add UFFFiles
 ```
@@ -33,8 +37,22 @@ data = readuff("path/to/your/file.uff")
 writeuff("path/to/save/file.uff", data)
 ```
 
+## Helper functions
+
+Converting units to SI
+
+`convert_to_si(data)`
+
+Convert a series of similar datasets to a matrix (for datasets 55 or 58)
+
+`collect_to_mat(data)`
+
 ## Supported formats
+
 Currently, `UFFFiles.jl` supports reading and writing UFF files with the following blocks:
+
+Currently, `UFFFiles.jl` supports reading and writing UFF files with the following blocks:
+
 - Dataset 15
 - Dataset 18
 - Dataset 55
