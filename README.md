@@ -39,17 +39,11 @@ writeuff("path/to/save/file.uff", data)
 
 ## Helper functions
 
-Converting units to SI
+- Converting units to SI `convert_to_si(data)`
 
-`convert_to_si(data)`
-
-Convert a series of similar datasets to a matrix (for datasets 55 or 58)
-
-`collect_to_mat(data)`
+- Convert a series of similar datasets to a matrix (for datasets 55 or 58) `collect_to_mat(data)`
 
 ## Supported formats
-
-Currently, `UFFFiles.jl` supports reading and writing UFF files with the following blocks:
 
 Currently, `UFFFiles.jl` supports reading and writing UFF files with the following blocks:
 

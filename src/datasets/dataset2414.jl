@@ -68,218 +68,11 @@ A struct containing UFF Dataset 2414 (Analysis data) data.
         result_type = 0,
         dtype = 0,
         num_data_values = 0,
-        int_analysis_type_raw = Int[],
-        real_analysis_type_raw = Float64[],
-        data_info_raw = Vector{Int}[],
-        data_value_raw = AbstractVector[]
+        int_analysis_type = NamedTuple(),
+        real_analysis_type = NamedTuple(),
+        data_info = NamedTuple(),
+        data_value = AbstractArray[]
     )
-        if !isempty(int_analysis_type_raw)
-            if analysis_type == 0 # Unknown
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-
-            elseif analysis_type == 1 # Static
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    iteration_ID = int_analysis_type_raw[2],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    load_set = int_analysis_type_raw[5],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-
-            elseif analysis_type == 2 # Normal Mode
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    iteration_ID = int_analysis_type_raw[2],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    mode_ID = int_analysis_type_raw[6],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-
-            elseif analysis_type == 3 # Complex Eigenvalue first order
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    load_set = int_analysis_type_raw[5],
-                    mode_ID = int_analysis_type_raw[6],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-
-            elseif analysis_type == 4 # Transient
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    load_set = int_analysis_type_raw[5],
-                    time_step_ID = int_analysis_type_raw[7],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-
-            elseif analysis_type == 5 # Frequency Response
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    load_set = int_analysis_type_raw[5],
-                    freq_step_ID = int_analysis_type_raw[8],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-
-            elseif analysis_type == 6 # Buckling
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    load_set = int_analysis_type_raw[5],
-                    mode_ID = int_analysis_type_raw[6],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-
-            elseif analysis_type == 7 # Complex Eigenvalue second order
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    load_set = int_analysis_type_raw[5],
-                    mode_ID = int_analysis_type_raw[6],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-
-            elseif analysis_type == 8 # Static non-linear
-                int_analysis_type = (
-                    design_set_ID = int_analysis_type_raw[1],
-                    solution_set_ID = int_analysis_type_raw[3],
-                    bc = int_analysis_type_raw[4],
-                    time_step_ID = int_analysis_type_raw[7],
-                    creation_option = int_analysis_type_raw[9],
-                    number_retained = int_analysis_type_raw[10]
-                )
-            end
-        end
-
-        if !isempty(real_analysis_type_raw)
-            if analysis_type == 0 # Unknown
-                real_analysis_type = ()
-
-            elseif analysis_type == 1 # Static
-                real_analysis_type = ()
-
-            elseif analysis_type == 2 # Normal Mode
-                real_analysis_type = (
-                    frequency = real_analysis_type_raw[2],
-                    modal_mass = real_analysis_type_raw[4],
-                    modal_visc_dr = real_analysis_type_raw[5],
-                    modal_hyst_dr = real_analysis_type_raw[6]
-                )
-
-            elseif analysis_type == 3 # Complex Eigenvalue first order
-                real_analysis_type = (
-                    real_eigenvalue = real_analysis_type_raw[7],
-                    imag_eigenvalue = real_analysis_type_raw[8],
-                    real_modalA = real_analysis_type_raw[9],
-                    imag_modalA = real_analysis_type_raw[10],
-                    real_modalB = real_analysis_type_raw[11],
-                    imag_modalB = real_analysis_type_raw[12]
-                )
-
-            elseif analysis_type == 4 # Transient
-                real_analysis_type = (
-                    time = real_analysis_type_raw[1]
-                )
-
-            elseif analysis_type == 5 # Frequency Response
-                real_analysis_type = (
-                    frequency = real_analysis_type_raw[2]
-                )
-
-            elseif analysis_type == 6 # Buckling
-                real_analysis_type = (
-                    eigenvalue = real_analysis_type_raw[3]
-                )
-
-            elseif analysis_type == 7 # Complex Eigenvalue second order
-                real_analysis_type = (
-                    real_eigenvalue = real_analysis_type_raw[7],
-                    imag_eigenvalue = real_analysis_type_raw[8],
-                    real_modalA = real_analysis_type_raw[9],
-                    imag_modalA = real_analysis_type_raw[10],
-                    real_modalB = real_analysis_type_raw[11],
-                    imag_modalB = real_analysis_type_raw[12]
-                )
-
-            elseif analysis_type == 8 # Static non-linear
-                real_analysis_type = (
-                    time = real_analysis_type_raw[1]
-                )
-            end
-        end
-
-        # Parse r14 and r15 based on data_location
-        if !isempty(data_info_raw) && !isempty(data_value_raw)
-            if dataset_location ==  1 # Nodes
-                data_info = (node_ID = reduce(vcat, data_info_raw),)
-                data_value = copy(transpose(reduce(hcat, data_value_raw)))
-
-            elseif dataset_location == 2 # Elements
-                elt_info = reduce(hcat, data_info_raw)
-                data_info = (
-                    elt_ID = elt_info[1, :],
-                    ndv_per_elt = elt_info[2, :]
-                )
-
-                data_value = data_value_raw
-
-            elseif dataset_location == 3 # Nodes on elements
-                elt_info = reduce(hcat, data_info_raw)
-                data_info = (
-                    elt_ID = elt_info[1, :],
-                    data_exp_code = elt_info[2, :],
-                    nnodes_per_elt = elt_info[3, :],
-                    ndv_per_node = elt_info[4, :],
-                )
-
-                data_type = eltype(eltype(data_value_raw))
-                data_value = Matrix{data_type}[]
-                for (i, dv) in enumerate(data_value_raw)
-                    nnodes = data_info.nnodes_per_elt[i]
-                    ndv = data_info.ndv_per_node[i]
-                    push!(data_value, copy(transpose(reshape(dv, ndv, nnodes))))
-                end
-
-            elseif dataset_location == 5 # Points
-                point_info = reduce(hcat, data_info_raw)
-                data_info = (
-                    elt_ID = point_info[1, :],
-                    data_exp_code = point_info[2, :],
-                    npts_per_elt = point_info[3, :],
-                    ndv_per_point = point_info[4, :],
-                    elt_order = point_info[5, :]
-                )
-
-                data_type = eltype(eltype(data_value_raw))
-                data_value = Matrix{data_type}[]
-                for (i, dv) in enumerate(data_value_raw)
-                    npts = data_info.npts_per_elt[i]
-                    ndv = data_info.ndv_per_point[i]
-                    push!(data_value, copy(reshape(dv, ndv, npts)))
-                end
-            end
-        end
 
         return new(:Dataset2414, "Analysis data", analysis_dlabel, analysis_dname, dataset_location, id_line1, id_line2, id_line3, id_line4, id_line5, model_type, analysis_type, data_characteristic, result_type, dtype, num_data_values, int_analysis_type, real_analysis_type, data_info, data_value)
     end
@@ -891,6 +684,215 @@ function parse_dataset2414(io)
 
         push!(data_value_raw, copy(_values))
         empty!(_values)
+    end
+
+    # Parse integer analysis type information
+    if !isempty(int_analysis_type_raw)
+        if analysis_type == 0 # Unknown
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+
+        elseif analysis_type == 1 # Static
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                iteration_ID = int_analysis_type_raw[2],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                load_set = int_analysis_type_raw[5],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+
+        elseif analysis_type == 2 # Normal Mode
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                iteration_ID = int_analysis_type_raw[2],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                mode_ID = int_analysis_type_raw[6],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+
+        elseif analysis_type == 3 # Complex Eigenvalue first order
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                load_set = int_analysis_type_raw[5],
+                mode_ID = int_analysis_type_raw[6],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+
+        elseif analysis_type == 4 # Transient
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                load_set = int_analysis_type_raw[5],
+                time_step_ID = int_analysis_type_raw[7],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+
+        elseif analysis_type == 5 # Frequency Response
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                load_set = int_analysis_type_raw[5],
+                freq_step_ID = int_analysis_type_raw[8],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+
+        elseif analysis_type == 6 # Buckling
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                load_set = int_analysis_type_raw[5],
+                mode_ID = int_analysis_type_raw[6],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+
+        elseif analysis_type == 7 # Complex Eigenvalue second order
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                load_set = int_analysis_type_raw[5],
+                mode_ID = int_analysis_type_raw[6],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+
+        elseif analysis_type == 8 # Static non-linear
+            int_analysis_type = (
+                design_set_ID = int_analysis_type_raw[1],
+                solution_set_ID = int_analysis_type_raw[3],
+                bc = int_analysis_type_raw[4],
+                time_step_ID = int_analysis_type_raw[7],
+                creation_option = int_analysis_type_raw[9],
+                number_retained = int_analysis_type_raw[10]
+            )
+        end
+    end
+
+    if !isempty(real_analysis_type_raw)
+        if analysis_type == 0 # Unknown
+            real_analysis_type = ()
+
+        elseif analysis_type == 1 # Static
+            real_analysis_type = ()
+
+        elseif analysis_type == 2 # Normal Mode
+            real_analysis_type = (
+                frequency = real_analysis_type_raw[2],
+                modal_mass = real_analysis_type_raw[4],
+                modal_visc_dr = real_analysis_type_raw[5],
+                modal_hyst_dr = real_analysis_type_raw[6]
+            )
+
+        elseif analysis_type == 3 # Complex Eigenvalue first order
+            real_analysis_type = (
+                real_eigenvalue = real_analysis_type_raw[7],
+                imag_eigenvalue = real_analysis_type_raw[8],
+                real_modalA = real_analysis_type_raw[9],
+                imag_modalA = real_analysis_type_raw[10],
+                real_modalB = real_analysis_type_raw[11],
+                imag_modalB = real_analysis_type_raw[12]
+            )
+
+        elseif analysis_type == 4 # Transient
+            real_analysis_type = (
+                time = real_analysis_type_raw[1]
+            )
+
+        elseif analysis_type == 5 # Frequency Response
+            real_analysis_type = (
+                frequency = real_analysis_type_raw[2]
+            )
+
+        elseif analysis_type == 6 # Buckling
+            real_analysis_type = (
+                eigenvalue = real_analysis_type_raw[3]
+            )
+
+        elseif analysis_type == 7 # Complex Eigenvalue second order
+            real_analysis_type = (
+                real_eigenvalue = real_analysis_type_raw[7],
+                imag_eigenvalue = real_analysis_type_raw[8],
+                real_modalA = real_analysis_type_raw[9],
+                imag_modalA = real_analysis_type_raw[10],
+                real_modalB = real_analysis_type_raw[11],
+                imag_modalB = real_analysis_type_raw[12]
+            )
+
+        elseif analysis_type == 8 # Static non-linear
+            real_analysis_type = (
+                time = real_analysis_type_raw[1]
+            )
+        end
+    end
+
+    # Parse r14 and r15 based on data_location
+    if !isempty(data_info_raw) && !isempty(data_value_raw)
+        if dataset_location ==  1 # Nodes
+            data_info = (node_ID = reduce(vcat, data_info_raw),)
+            data_value = copy(transpose(reduce(hcat, data_value_raw)))
+
+        elseif dataset_location == 2 # Elements
+            elt_info = reduce(hcat, data_info_raw)
+            data_info = (
+                elt_ID = elt_info[1, :],
+                ndv_per_elt = elt_info[2, :]
+            )
+
+            data_value = data_value_raw
+
+        elseif dataset_location == 3 # Nodes on elements
+            elt_info = reduce(hcat, data_info_raw)
+            data_info = (
+                elt_ID = elt_info[1, :],
+                data_exp_code = elt_info[2, :],
+                nnodes_per_elt = elt_info[3, :],
+                ndv_per_node = elt_info[4, :],
+            )
+
+            data_type = eltype(eltype(data_value_raw))
+            data_value = Matrix{data_type}[]
+            for (i, dv) in enumerate(data_value_raw)
+                nnodes = data_info.nnodes_per_elt[i]
+                ndv = data_info.ndv_per_node[i]
+                push!(data_value, copy(transpose(reshape(dv, ndv, nnodes))))
+            end
+
+        elseif dataset_location == 5 # Points
+            point_info = reduce(hcat, data_info_raw)
+            data_info = (
+                elt_ID = point_info[1, :],
+                data_exp_code = point_info[2, :],
+                npts_per_elt = point_info[3, :],
+                ndv_per_point = point_info[4, :],
+                elt_order = point_info[5, :]
+            )
+
+            data_type = eltype(eltype(data_value_raw))
+            data_value = Matrix{data_type}[]
+            for (i, dv) in enumerate(data_value_raw)
+                npts = data_info.npts_per_elt[i]
+                ndv = data_info.ndv_per_point[i]
+                push!(data_value, copy(reshape(dv, ndv, npts)))
+            end
+        end
     end
 
     return Dataset2414(

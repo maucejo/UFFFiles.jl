@@ -66,48 +66,13 @@ A struct containing UFF Dataset 55 (Data at nodes) data.
         spec_dtype = 0,
         dtype = 0,
         ndv_per_node = 0,
-        r7_raw = Int[],
-        r8_raw = Float64[],
+        r7 = NamedTuple(),
+        r8 = NamedTuple(),
         node_number = Int[],
         data = Array{Union{Float64, ComplexF64}}(undef, 0, 0)
     )
 
-        # Parse r7 and r8 based on analysis_type
-        if !isempty(r7_raw) && !isempty(r8_raw)
-            if analysis_type == 0 # Unknown
-                r7 = (field1 = r7_raw[1], field2 = r7_raw[2], ID_number = r7_raw[3])
-                r8 = (field1 = r8_raw[1],)
-
-            elseif analysis_type == 1 # Static
-                r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3])
-                r8 = (field1 = r8_raw[1],)
-
-            elseif analysis_type == 2 # Normal Mode
-                r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case = r7_raw[3], mode_number = r7_raw[4])
-                r8 = (freq = r8_raw[1], modal_mass = r8_raw[2], modal_visc_dr = r8_raw[3], modal_hyst_dr = r8_raw[4])
-
-            elseif analysis_type == 3 # Complex Eigenvalue
-                r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3], mode_number = r7_raw[4])
-                r8 = (real_eigval = r8_raw[1], imag_eigval = r8_raw[2], real_modalA = r8_raw[3], imag_modalA = r8_raw[4], real_modalB = r8_raw[5], imag_modalB = r8_raw[6])
-
-            elseif analysis_type == 4 # Transient
-                r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3], time_step_num = r7_raw[4])
-                r8 = (time = r8_raw[1],)
-
-            elseif analysis_type == 5 # Frequency Response
-                r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3], freq_step_num = r7_raw[4])
-                r8 = (freq = r8_raw[1],)
-
-            elseif analysis_type == 6 # Buckling
-                r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3])
-                r8 = (eigval = r8_raw[1],)
-            end
-        else
-            r7 = ()
-            r8 = ()
-        end
-
-        return new(:Dataset55, "Data at nodes", id1, id2, id3, id4, id5, model_type, analysis_type, data_charac, spec_dtype, dtype, ndv_per_node, r7, r8, node_number, data)
+          return new(:Dataset55, "Data at nodes", id1, id2, id3, id4, id5, model_type, analysis_type, data_charac, spec_dtype, dtype, ndv_per_node, r7, r8, node_number, data)
     end
 end
 
@@ -481,6 +446,41 @@ function parse_dataset55(io)
           empty!(_data)
      end
 
+     # Parse r7 and r8 based on analysis_type
+     if !isempty(r7_raw) && !isempty(r8_raw)
+          if analysis_type == 0 # Unknown
+               r7 = (field1 = r7_raw[1], field2 = r7_raw[2], ID_number = r7_raw[3])
+               r8 = (field1 = r8_raw[1],)
+
+          elseif analysis_type == 1 # Static
+               r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3])
+               r8 = (field1 = r8_raw[1],)
+
+          elseif analysis_type == 2 # Normal Mode
+               r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case = r7_raw[3], mode_number = r7_raw[4])
+               r8 = (freq = r8_raw[1], modal_mass = r8_raw[2], modal_visc_dr = r8_raw[3], modal_hyst_dr = r8_raw[4])
+
+          elseif analysis_type == 3 # Complex Eigenvalue
+               r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3], mode_number = r7_raw[4])
+               r8 = (real_eigval = r8_raw[1], imag_eigval = r8_raw[2], real_modalA = r8_raw[3], imag_modalA = r8_raw[4], real_modalB = r8_raw[5], imag_modalB = r8_raw[6])
+
+          elseif analysis_type == 4 # Transient
+               r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3], time_step_num = r7_raw[4])
+               r8 = (time = r8_raw[1],)
+
+          elseif analysis_type == 5 # Frequency Response
+               r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3], freq_step_num = r7_raw[4])
+               r8 = (freq = r8_raw[1],)
+
+          elseif analysis_type == 6 # Buckling
+               r7 = (field1 = r7_raw[1], field2 = r7_raw[2], load_case_num = r7_raw[3])
+               r8 = (eigval = r8_raw[1],)
+          end
+     else
+          r7 = ()
+          r8 = ()
+     end
+
      return Dataset55(
           id1,
           id2,
@@ -493,8 +493,8 @@ function parse_dataset55(io)
           spec_dtype,
           dtype,
           ndv_per_node,
-          r7_raw,
-          r8_raw,
+          r7,
+          r8,
           node_number,
           copy(reduce(hcat, data))
      )

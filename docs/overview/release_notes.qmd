@@ -14,6 +14,10 @@ format:
 
 - Add `convert_to_si!` function that can convert units of multiple datasets at once.
 
+- `Dataset55` struct now include `r7` and `r8` fields as named tuples to store the raw data from lines 7 and 8 of the dataset block. The previous `r7_raw` and `r8_raw` constructor fields have been removed.
+
+- `Dataset2414` struct now include `int_analysis_type`, `real_analysis_type`, `data_info`, and `data_value` fields as named tuples and arrays to store the parsed data from the dataset block. The previous `int_analysis_type_raw`, `real_analysis_type_raw`, `data_info_raw`, and `data_value_raw` constructor fields have been removed.
+
 ## v1.0.2
 
 - Improve internals implementation to deal with files that have inconsistent line header.
