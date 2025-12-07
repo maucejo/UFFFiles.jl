@@ -164,7 +164,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#v1.0.1" id="toc-v1.0.1" class="nav-link active" data-scroll-target="#v1.0.1">v1.0.1</a></li>
+  <li><a href="#v1.1.0" id="toc-v1.1.0" class="nav-link active" data-scroll-target="#v1.1.0">v1.1.0</a></li>
+  <li><a href="#v1.0.2" id="toc-v1.0.2" class="nav-link" data-scroll-target="#v1.0.2">v1.0.2</a></li>
+  <li><a href="#v1.0.1" id="toc-v1.0.1" class="nav-link" data-scroll-target="#v1.0.1">v1.0.1</a></li>
   <li><a href="#v1.0.0" id="toc-v1.0.0" class="nav-link" data-scroll-target="#v1.0.0">v1.0.0</a></li>
   <li><a href="#v0.2.1" id="toc-v0.2.1" class="nav-link" data-scroll-target="#v0.2.1">v0.2.1</a></li>
   <li><a href="#v0.2.0" id="toc-v0.2.0" class="nav-link" data-scroll-target="#v0.2.0">v0.2.0</a></li>
@@ -194,6 +196,23 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="v1.1.0" class="level2">
+<h2 class="anchored" data-anchor-id="v1.1.0">v1.1.0</h2>
+<p><strong>Breaking changes</strong></p>
+<ul>
+<li><p>Add <code>collect_to_mat</code> function to replace <code>dataset55_to_mat</code> and <code>dataset58_to_mat</code> functions. This new function can handle both <code>Dataset55</code> and <code>Dataset58</code> objects.</p></li>
+<li><p>Add <code>convert_to_si!</code> function that can convert units of multiple datasets at once.</p></li>
+<li><p><code>Dataset55</code> struct now include <code>r7</code> and <code>r8</code> fields as named tuples to store the raw data from lines 7 and 8 of the dataset block. The previous <code>r7_raw</code> and <code>r8_raw</code> constructor fields have been removed.</p></li>
+<li><p><code>Dataset2414</code> struct now include <code>int_analysis_type</code>, <code>real_analysis_type</code>, <code>data_info</code>, and <code>data_value</code> fields as named tuples and arrays to store the parsed data from the dataset block. The previous <code>int_analysis_type_raw</code>, <code>real_analysis_type_raw</code>, <code>data_info_raw</code>, and <code>data_value_raw</code> constructor fields have been removed.</p></li>
+</ul>
+</section>
+<section id="v1.0.2" class="level2">
+<h2 class="anchored" data-anchor-id="v1.0.2">v1.0.2</h2>
+<ul>
+<li><p>Improve internals implementation to deal with files that have inconsistent line header.</p></li>
+<li><p>Implementation of tests to check for correct reading and writing of the supported datasets.</p></li>
+</ul>
+</section>
 <section id="v1.0.1" class="level2">
 <h2 class="anchored" data-anchor-id="v1.0.1">v1.0.1</h2>
 <ul>

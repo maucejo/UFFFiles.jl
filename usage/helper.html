@@ -201,8 +201,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#supported-file-extensions" id="toc-supported-file-extensions" class="nav-link" data-scroll-target="#supported-file-extensions"><span class="header-section-number">3</span> Supported file extensions</a></li>
   <li><a href="#srdc-documentation" id="toc-srdc-documentation" class="nav-link" data-scroll-target="#srdc-documentation"><span class="header-section-number">4</span> SRDC Documentation</a></li>
   <li><a href="#connectivity-matrix" id="toc-connectivity-matrix" class="nav-link" data-scroll-target="#connectivity-matrix"><span class="header-section-number">5</span> Connectivity Matrix</a></li>
-  <li><a href="#dataset-55-to-matrix" id="toc-dataset-55-to-matrix" class="nav-link" data-scroll-target="#dataset-55-to-matrix"><span class="header-section-number">6</span> Dataset 55 to matrix</a></li>
-  <li><a href="#dataset-58-to-matrix" id="toc-dataset-58-to-matrix" class="nav-link" data-scroll-target="#dataset-58-to-matrix"><span class="header-section-number">7</span> Dataset 58 to matrix</a></li>
+  <li><a href="#convert-to-si-units" id="toc-convert-to-si-units" class="nav-link" data-scroll-target="#convert-to-si-units"><span class="header-section-number">6</span> Convert to SI units</a></li>
+  <li><a href="#dataset-55-to-matrix" id="toc-dataset-55-to-matrix" class="nav-link" data-scroll-target="#dataset-55-to-matrix"><span class="header-section-number">7</span> Dataset 55 to matrix</a></li>
+  <li><a href="#dataset-58-to-matrix" id="toc-dataset-58-to-matrix" class="nav-link" data-scroll-target="#dataset-58-to-matrix"><span class="header-section-number">8</span> Dataset 58 to matrix</a></li>
   </ul>
 </nav>
     </div>
@@ -354,30 +355,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>data2412 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file2412.uff"</span>)[<span class="fl">1</span>]</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>connectivity <span class="op">=</span> <span class="fu">connectivity_matrix</span>(data2412)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="dataset-55-to-matrix" class="level2" data-number="6">
-<h2 data-number="6" class="anchored" data-anchor-id="dataset-55-to-matrix"><span class="header-section-number">6</span> Dataset 55 to matrix</h2>
+<section id="convert-to-si-units" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="convert-to-si-units"><span class="header-section-number">6</span> Convert to SI units</h2>
 <div class="api">
 <div id="14" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
-<div class="markdown"><pre><code class="language-julia">dataset55_to_mat(dataset::Vector{Dataset55})</code></pre>
-<p>Converts a vector of Dataset55 objects into a matrix of data values and a vector of corresponding x-values based on the analysis type.</p>
+<div class="markdown"><pre><code class="language-julia">convert_to_si!(ds)
+convert_to_si!(ds, ds164)</code></pre>
+<p>Converts the units of the given UFF dataset <code>ds</code> to SI units in place. Note that the mass is defined as F/a and its units will be determined by F &amp; a</p>
 <p><strong>Input</strong></p>
 <ul>
-<li><p><code>dataset::Vector{Dataset55}</code>: A vector of Dataset55 objects to be converted</p>
+<li><p><code>ds</code>: A vector of UFF datasets that contains dimensional data to be converted.</p>
+</li>
+<li><p><code>ds164</code>: A Dataset164 object that provides conversion factors (default: Dataset164() with SI units).</p>
 </li>
 </ul>
-<p><strong>Outputs</strong></p>
+<p><strong>Notes</strong></p>
+<p>convert<em>to</em>si!(ds) reads the last encountered 164 dataset and uses its conversion factors for converting subsequent datasets.</p>
+<p>convert<em>to</em>si!(ds, ds164) provides the conversion factors directly. Worth to use when <code>ds</code> does not contain a <code>Dataset164</code> or when using broadcasting.</p>
+<p><strong>Output</strong></p>
 <ul>
-<li><p><code>mat::VecOrMat{dtype}</code>: A matrix where each column corresponds to a dataset's data values.</p>
-</li>
-<li><p><code>x::Vector{xtype}</code>: Vector of x-values corresponding to each dataset based on its analysis type.</p>
-</li>
-</ul>
-<p><strong>Note</strong></p>
-<ul>
-<li><p><code>dtype</code> and <code>xtype</code> depend on the dataset's <code>dtype</code> and <code>analysis_type</code> respectively.</p>
-</li>
-<li><p>It is assumed that all datasets in the input vector have the same number of data points and analysis type.</p>
+<li><p><code>ds</code>: Dataset with its data converted to SI units.</p>
 </li>
 </ul>
 
@@ -388,51 +386,56 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's assume you have read a UFF file containing dataset 55 only</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>data55 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file55.uff"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># readuff returns a vector of datasets</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>datasets <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file.uff"</span>)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset 55 to a matrix</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>matrix55, x <span class="op">=</span> <span class="fu">dataset55_to_mat</span>(data55)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert all datasets to SI units - This assumes that a Dataset164 is present in the file. Otherwise, default SI conversion factors will be used.</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_to_si!</span>(datasets)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert all datasets to SI units using a specific Dataset164 - Useful when no Dataset164 is present in the file</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ds164 <span class="op">=</span> <span class="fu">Dataset164</span>(<span class="fl">9</span>, <span class="st">"User Defined"</span>, <span class="fl">2</span>, <span class="fl">0.3048</span>, <span class="fl">4.44822</span>, <span class="fl">1</span>., <span class="fl">273.15</span>)  <span class="co"># Example conversion factors</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_to_si!</span>(datasets, ds164)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert all datasets to SI units using broadcasting - Useful to convert only a subset of datasets</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_to_si!</span>.(datasets, <span class="fu">Ref</span>(ds164))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="dataset-58-to-matrix" class="level2" data-number="7">
-<h2 data-number="7" class="anchored" data-anchor-id="dataset-58-to-matrix"><span class="header-section-number">7</span> Dataset 58 to matrix</h2>
+<section id="dataset-55-to-matrix" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="dataset-55-to-matrix"><span class="header-section-number">7</span> Dataset 55 to matrix</h2>
 <div class="api">
 <div id="16" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
-<div class="markdown"><pre><code class="language-julia">dataset58_to_mat(dataset::Vector{Dataset58})</code></pre>
-<p>Converts a vector of Dataset58 objects into a matrix of data values and a vector of corresponding x-values based on the dataset parameters.</p>
-<p><strong>Input</strong></p>
-<ul>
-<li><p><code>dataset::Vector{Dataset58}</code>: A vector of Dataset58 objects to be converted</p>
-</li>
-</ul>
-<p><strong>Outputs</strong></p>
-<ul>
-<li><p><code>mat::VecOrMat{dtype}</code>: A matrix where each row corresponds to a dataset's data values.</p>
-</li>
-<li><p><code>x::Vector{xtype}</code>: A vector of x-values corresponding to each dataset based on its parameters.</p>
-</li>
-</ul>
-<p><strong>Note</strong></p>
-<ul>
-<li><p><code>dtype</code> and <code>xtype</code> depend on the dataset's <code>ord_dtype</code>.</p>
-</li>
-<li><p>It is assumed that all datasets in the input vector have the same number of data points and data type.</p>
-</li>
-</ul>
-
-
+<div class="markdown"><p>No documentation found.</p>
+<p>Binding <code>Main.Notebook.dataset55_to_mat</code> does not exist.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sourceCode" id="cb7"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's assume you have read a UFF file containing dataset 58 only</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>data58 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file58.uff"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's assume you have read a UFF file containing dataset 55 only</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>data55 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file55.uff"</span>)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset 58 to a matrix</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>matrix58, x <span class="op">=</span> <span class="fu">dataset58_to_matrix</span>(data58)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset 55 to a matrix</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>matrix55, x <span class="op">=</span> <span class="fu">dataset55_to_mat</span>(data55)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="dataset-58-to-matrix" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="dataset-58-to-matrix"><span class="header-section-number">8</span> Dataset 58 to matrix</h2>
+<div class="api">
+<div id="18" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display" data-execution_count="1">
+<div class="markdown"><p>No documentation found.</p>
+<p>Binding <code>Main.Notebook.dataset58_to_mat</code> does not exist.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">UFFFiles</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's assume you have read a UFF file containing dataset 58 only</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>data58 <span class="op">=</span> <span class="fu">readuff</span>(<span class="st">"path/to/your/file58.uff"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert dataset 58 to a matrix</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>matrix58, x <span class="op">=</span> <span class="fu">dataset58_to_matrix</span>(data58)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>

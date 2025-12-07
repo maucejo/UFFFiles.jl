@@ -688,7 +688,7 @@ Dataset class: Data at points
                        (See 3. for Data at Nodes on Elements)
 
                                    Analysis Type
-                                                                          S
+                                                                           S
                                                                            t
                                                                            a
                                               C                       C    t
@@ -766,10 +766,12 @@ R
 <div id="6" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
 <div class="markdown"><pre><code class="language-julia">Dataset2414</code></pre>
-<p>A struct containing UFF Dataset 2414 metadata.</p>
+<p>A struct containing UFF Dataset 2414 (Analysis data) data.</p>
 <p><strong>Fields</strong></p>
 <ul>
 <li><p><code>type::Symbol</code>: Data set type</p>
+</li>
+<li><p><code>name::String</code>: Data set name</p>
 </li>
 <li><p><code>analysis_dlabel::Int</code>: Analysyis data label</p>
 </li>
@@ -806,6 +808,336 @@ R
 <li><p><code>data_info::NamedTuple</code>: Data information</p>
 </li>
 <li><p><code>data_value::AbstractArray</code>: Data values</p>
+</li>
+</ul>
+<p><strong>Note on int<em>analysis</em>type, real<em>analysis</em>type, data_info fields</strong></p>
+<p>These fields are NamedTuples whose contents depend on the values of other fields, particularly <code>analysis_type</code> and <code>dataset_location</code>. Refer to the UFF documentation for details on the specific structure of these fields based on the analysis type and dataset class.</p>
+<p>For <code>int_analysis_type</code> and <code>real_analysis_type</code>, the structure is as follows based on <code>analysis_type</code>:</p>
+<ul>
+<li><p>If <code>analysis_type == 0</code> (Unknown):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> is empty.</p>
+</li>
+</ul>
+</li>
+<li><p>If <code>analysis_type == 1</code> (Static):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>iteration_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>load_set::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> is empty.</p>
+</li>
+</ul>
+</li>
+<li><p>If <code>analysis_type == 2</code> (Normal Mode):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>iteration_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>mode_ID::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>frequency::Float64</code></p>
+</li>
+<li><p><code>modal_mass::Float64</code></p>
+</li>
+<li><p><code>modal_visc_dr::Float64</code></p>
+</li>
+<li><p><code>modal_hyst_dr::Float64</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>analysis_type == 3</code> (Complex Eigenvalue first order):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>load_set::Int</code></p>
+</li>
+<li><p><code>mode_ID::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>real_eigenvalue::Float64</code></p>
+</li>
+<li><p><code>imag_eigenvalue::Float64</code></p>
+</li>
+<li><p><code>real_modalA::Float64</code></p>
+</li>
+<li><p><code>imag_modalA::Float64</code></p>
+</li>
+<li><p><code>real_modalB::Float64</code></p>
+</li>
+<li><p><code>imag_modalB::Float64</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>analysis_type == 4</code> (Transient):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>load_set::Int</code></p>
+</li>
+<li><p><code>time_step_ID::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>time::Float64</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>analysis_type == 5</code> (Frequency Response):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>load_set::Int</code></p>
+</li>
+<li><p><code>frequency_number::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>frequency::Float64</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>analysis_type == 6</code> (Buckling):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>load_set::Int</code></p>
+</li>
+<li><p><code>mode_ID::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>eigenvalue::Float64</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>analysis_type == 7</code> (Complex Eigenvalue second order):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>load_set::Int</code></p>
+</li>
+<li><p><code>mode_ID::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>real_eigenvalue::Float64</code></p>
+</li>
+<li><p><code>imag_eigenvalue::Float64</code></p>
+</li>
+<li><p><code>real_modalA::Float64</code></p>
+</li>
+<li><p><code>imag_modalA::Float64</code></p>
+</li>
+<li><p><code>real_modalB::Float64</code></p>
+</li>
+<li><p><code>imag_modalB::Float64</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>analysis_type == 9</code> (Static non-linear):</p>
+<ul>
+<li><p><code>int_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>design_set_ID::Int</code></p>
+</li>
+<li><p><code>iteration_ID::Int</code></p>
+</li>
+<li><p><code>solution_set_ID::Int</code></p>
+</li>
+<li><p><code>bc::Int</code></p>
+</li>
+<li><p><code>load_set::Int</code></p>
+</li>
+<li><p><code>creation_option::Int</code></p>
+</li>
+<li><p><code>number_retained::Int</code></p>
+</li>
+</ul>
+</li>
+<li><p><code>real_analysis_type</code> contains:</p>
+<ul>
+<li><p><code>time::Float64</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>For <code>data_info</code>, the structure depends on <code>dataset_location</code>:</p>
+<ul>
+<li><p>If <code>dataset_location == 1</code> (Data at nodes):</p>
+<ul>
+<li><p><code>data_info</code> contains:</p>
+<ul>
+<li><p><code>node_ID::Int</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>dataset_location == 2</code> (Data on elements):</p>
+<ul>
+<li><p><code>data_info</code> contains:</p>
+<ul>
+<li><p><code>elt_ID::Int</code></p>
+</li>
+<li><p><code>ndv_per_elt::Int</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>dataset_location == 3</code> (Data at nodes on elements):</p>
+<ul>
+<li><p><code>data_info</code> contains:</p>
+<ul>
+<li><p><code>elt_ID::Int</code></p>
+</li>
+<li><p><code>data_exp_code::Int</code></p>
+</li>
+<li><p><code>nnodes_per_element::Int</code></p>
+</li>
+<li><p><code>ndv_per_node::Int</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>If <code>dataset_location == 5</code> (Data at points):</p>
+<ul>
+<li><p><code>data_info</code> contains:</p>
+<ul>
+<li><p><code>elt_ID::Int</code></p>
+</li>
+<li><p><code>data_exp_code::Int</code></p>
+</li>
+<li><p><code>npts_per_elt::Int</code></p>
+</li>
+<li><p><code>ndv_per_point::Int</code></p>
+</li>
+<li><p><code>elt_order::Int</code></p>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 

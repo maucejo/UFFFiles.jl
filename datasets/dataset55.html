@@ -573,10 +573,12 @@ ul.task-list li input[type="checkbox"] {
 <div id="6" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
 <div class="markdown"><pre><code class="language-julia">Dataset55</code></pre>
-<p>A struct containing UFF Dataset 55 metadata.</p>
+<p>A struct containing UFF Dataset 55 (Data at nodes) data.</p>
 <p><strong>Fields</strong></p>
 <ul>
 <li><p><code>type::Symbol</code>: Data set type</p>
+</li>
+<li><p><code>name::String</code>: Data set name</p>
 </li>
 <li><p><code>id1::String</code>: ID line 1</p>
 </li>
@@ -607,6 +609,57 @@ ul.task-list li input[type="checkbox"] {
 <li><p><code>node_number::Vector{Int}</code>: Node numbers</p>
 </li>
 <li><p><code>data::Matrix{Union{Float64, ComplexF64}}</code>: Data values</p>
+</li>
+</ul>
+<p><strong>Note on r7 and r8 fields</strong></p>
+<p>These fields are stored as NamedTuples to accommodate the varying structure based on the analysis type. The specific fields within these NamedTuples depend on the <code>analysis_type</code> value, as detailed in the UFF documentation for Dataset 55.</p>
+<p>if <code>analysis_type == 0</code> (Unknown):</p>
+<ul>
+<li><p><code>r7</code>: (field1::Int, field2::Int, ID_number::Int)</p>
+</li>
+<li><p><code>r8</code>: (field1::Float64,)</p>
+</li>
+</ul>
+<p>if <code>analysis_type == 1</code> (Static):</p>
+<ul>
+<li><p><code>r7</code>: (field1::Int, field2::Int, load<em>case</em>num::Int)</p>
+</li>
+<li><p><code>r8</code>: (field1::Float64,)</p>
+</li>
+</ul>
+<p>if <code>analysis_type == 2</code> (Normal Mode):</p>
+<ul>
+<li><p><code>r7</code>: (field1::Int, field2::Int, load<em>case::Int, mode</em>number::Int)</p>
+</li>
+<li><p><code>r8</code>: (freq::Float64, modal<em>mass::Float64, modal</em>visc<em>dr::Float64, modal</em>hyst_dr::Float64)</p>
+</li>
+</ul>
+<p>if <code>analysis_type == 3</code> (Complex Eigenvalue):</p>
+<ul>
+<li><p><code>r7</code>: (field1::Int, field2::Int, load<em>case</em>num::Int, mode_number::Int)</p>
+</li>
+<li><p><code>r8</code>: (real<em>eigval::Float64, imag</em>eigval::Float64, real<em>modalA::Float64, imag</em>modalA::Float64, real<em>modalB::Float64, imag</em>modalB::Float64)</p>
+</li>
+</ul>
+<p>if <code>analysis_type == 4</code> (Transient):</p>
+<ul>
+<li><p><code>r7</code>: (field1::Int, field2::Int, load<em>case</em>num::Int, time<em>step</em>num::Int)</p>
+</li>
+<li><p><code>r8</code>: (time::Float64,)</p>
+</li>
+</ul>
+<p>if <code>analysis_type == 5</code> (Frequency Response):</p>
+<ul>
+<li><p><code>r7</code>: (field1::Int, field2::Int, load<em>case</em>num::Int, freq<em>step</em>num::Int)</p>
+</li>
+<li><p><code>r8</code>: (freq::Float64,)</p>
+</li>
+</ul>
+<p>if <code>analysis_type == 6</code> (Buckling):</p>
+<ul>
+<li><p><code>r7</code>: (field1::Int, field2::Int, load<em>case</em>num::Int)</p>
+</li>
+<li><p><code>r8</code>: (eigval::Float64,)</p>
 </li>
 </ul>
 
