@@ -114,7 +114,7 @@
     "href": "index.html#how-to-cite-this-package",
     "title": "UFFFiles.jl",
     "section": "How to cite this package",
-    "text": "How to cite this package\nIf you use UFFFiles.jl in your research, please consider citing it using the following reference:\n[1] M. AUCEJO, « UFFFiles.jl ». Zenodo, 2026. doi: 10.5281/zenodo.18504532.",
+    "text": "How to cite this package\nIf you use UFFFiles.jl in your research, please consider citing it using the following reference:\n[1] M. AUCEJO and contributors, « UFFFiles.jl ». Zenodo, 2026. doi: 10.5281/zenodo.18504532.",
     "crumbs": [
       "Overview",
       "UFFFiles.jl"
