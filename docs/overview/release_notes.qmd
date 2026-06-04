@@ -6,6 +6,10 @@ format:
     number-sections: false
 ---
 
+## v1.2.1
+
+- Fix a minor issue in `fileio_save`.
+
 ## v1.2.0
 
 **Breaking changes**
