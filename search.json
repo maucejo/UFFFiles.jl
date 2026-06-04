@@ -609,7 +609,18 @@
     "href": "overview/release_notes.html",
     "title": "Release Notes",
     "section": "",
-    "text": "Breaking changes\n\nAdd FileIO integration to allow reading and writing UFF files using the load and save functions from the FileIO package.",
+    "text": "Fix a minor issue in fileio_save.",
+    "crumbs": [
+      "Overview",
+      "Release Notes"
+    ]
+  },
+  {
+    "objectID": "overview/release_notes.html#v1.2.1",
+    "href": "overview/release_notes.html#v1.2.1",
+    "title": "Release Notes",
+    "section": "",
+    "text": "Fix a minor issue in fileio_save.",
     "crumbs": [
       "Overview",
       "Release Notes"
@@ -619,8 +630,8 @@
     "objectID": "overview/release_notes.html#v1.2.0",
     "href": "overview/release_notes.html#v1.2.0",
     "title": "Release Notes",
-    "section": "",
-    "text": "Breaking changes\n\nAdd FileIO integration to allow reading and writing UFF files using the load and save functions from the FileIO package.",
+    "section": "v1.2.0",
+    "text": "v1.2.0\nBreaking changes\n\nAdd FileIO integration to allow reading and writing UFF files using the load and save functions from the FileIO package.",
     "crumbs": [
       "Overview",
       "Release Notes"
