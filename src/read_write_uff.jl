@@ -83,4 +83,4 @@ function writeuff(filename::String, datasets; w58b::Bool = false)
 end
 
 # FileIO integration
-fileio_save(file::File{format"UFF"}, data) = writeuff(file.filename, data)
+fileio_save(file::File{FileIO.format"UFF"}, data) = writeuff(file.filename, data)
